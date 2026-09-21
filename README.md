@@ -39,13 +39,11 @@ npm run seed
 ```
 
 Populates the demo dataset (R23): one donation with items, five devices
-spread across 4+ lifecycle stages (received, triaged, available, repair),
-two families (`Herrera Family`, `Osei Family`) with leases, one device
-swap, three users (one per role), one sample payment, and one class
-session with attendance roster.
+spread across 4+ lifecycle stages, two families (`Herrera Family`,
+`Osei Family`) with leases, one device swap, three users (one per role),
+one sample payment, and one class session with attendance roster.
 
-> Note: `npm run seed` creates a server on port 3000 — stop any
-> running server before or after seeding.
+The seed is idempotent — safe to run multiple times.
 
 ## Sign-in (dev/test)
 

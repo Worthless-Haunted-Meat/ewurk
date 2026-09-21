@@ -12,7 +12,7 @@
     <% if (user.role === 'staff' || user.role === 'instructor') { %>
       <a href="/classes">Classes</a>
     <% } %>
-    <span class="who"><%= user.name %> (<%= user.role %>)</span>
+    <span class="who"><%= user.email %></span>
     <form method="post" action="/auth/logout" class="inline">
       <button type="submit">Sign out</button>
     </form>

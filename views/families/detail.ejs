@@ -52,10 +52,10 @@
       <p><a href="/leases/<%= summary.activeLease.id %>">View lease</a></p>
     <% } else { %>
       <section aria-label="Start lease">
-        <h2>Start lease</h2>
+        <h2>Available device</h2>
         <form method="post" action="/leases">
           <input type="hidden" name="familyId" value="<%= summary.family.id %>">
-          <label for="assetTag">Device</label>
+          <label for="assetTag">Available device</label>
           <select id="assetTag" name="assetTag" required>
             <% availableDevices.forEach(function(d) { %>
               <option value="<%= d.assetTag %>"><%= d.assetTag %> — <%= d.model %></option>
