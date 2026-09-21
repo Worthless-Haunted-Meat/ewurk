@@ -37,43 +37,151 @@ import type { DeviceStore, WipeInput } from '../../ports/device.js';
 export class SqliteDeviceStore implements DeviceStore {
   constructor(private db: DatabaseSync) {}
 
-  create(_input: { donationId: number; model: string; serial: string }): Device {
-    throw new Error('not implemented: SqliteDeviceStore.create');
+  create(input: { donationId: number; model: string; serial: string }): Device {
+    this.db
+      .prepare(
+        'INSERT INTO devices (asset_tag, donation_id, model, serial, status, created_at) ' +
+          'VALUES (?, ?, ?, ?, ?, datetime(\'now\'))',
+      )
+      .run(
+        'EW-PLACEHOLDER',
+        input.donationId,
+        input.model,
+        input.serial,
+        'received',
+      );
+    const id = this.db.prepare('SELECT last_insert_rowid() as id').get() as { id: number };
+    const padded = String(id.id).padStart(4, '0');
+    this.db
+      .prepare('UPDATE devices SET asset_tag = ? WHERE id = ?')
+      .run(`EW-${padded}`, id.id);
+    return this.getById(id.id)!;
   }
 
-  getById(_id: number): Device | null {
-    throw new Error('not implemented: SqliteDeviceStore.getById');
+  getById(id: number): Device | null {
+    return mapDevice(this.db.prepare(QUERY_BY_ID).get(id) as Record<string, unknown> | undefined);
   }
 
-  getByAssetTag(_assetTag: string): Device | null {
-    throw new Error('not implemented: SqliteDeviceStore.getByAssetTag');
+  getByAssetTag(assetTag: string): Device | null {
+    return mapDevice(this.db.prepare(QUERY_BY_ASSET_TAG).get(assetTag) as Record<string, unknown> | undefined);
   }
 
-  findBySerial(_serial: string): Device | null {
-    throw new Error('not implemented: SqliteDeviceStore.findBySerial');
+  findBySerial(serial: string): Device | null {
+    return mapDevice(this.db.prepare(QUERY_BY_SERIAL).get(serial) as Record<string, unknown> | undefined);
   }
 
-  listByDonation(_donationId: number): Device[] {
-    throw new Error('not implemented: SqliteDeviceStore.listByDonation');
+  listByDonation(donationId: number): Device[] {
+    const rows = this.db.prepare(LIST_BY_DONATION).all(donationId) as Record<string, unknown>[];
+    return rows.map((r) => mapDevice(r)!);
   }
 
   listAll(): Device[] {
-    throw new Error('not implemented: SqliteDeviceStore.listAll');
+    const rows = this.db.prepare(LIST_ALL).all() as Record<string, unknown>[];
+    return rows.map((r) => mapDevice(r)!);
   }
 
-  updateStatus(_id: number, _status: DeviceStatus, _wipe?: WipeInput): Device {
-    throw new Error('not implemented: SqliteDeviceStore.updateStatus');
+  updateStatus(id: number, status: DeviceStatus, wipe?: WipeInput): Device {
+    if (wipe) {
+      this.db
+        .prepare(
+          'UPDATE devices SET status = ?, wipe_method = ?, wipe_date = ?, wipe_operator = ? WHERE id = ?',
+        )
+        .run(status, wipe.wipeMethod, wipe.wipeDate, wipe.wipeOperator, id);
+    } else {
+      this.db.prepare('UPDATE devices SET status = ? WHERE id = ?').run(status, id);
+    }
+    return this.getById(id)!;
   }
 
-  setReplacesLink(_deviceId: number, _replacesDeviceId: number): void {
-    throw new Error('not implemented: SqliteDeviceStore.setReplacesLink');
+  setReplacesLink(deviceId: number, replacesDeviceId: number): void {
+    this.db
+      .prepare('UPDATE devices SET replaces_device_id = ? WHERE id = ?')
+      .run(replacesDeviceId, deviceId);
+    this.db
+      .prepare('UPDATE devices SET replaced_by_device_id = ? WHERE id = ?')
+      .run(deviceId, replacesDeviceId);
   }
 
-  appendEvent(_deviceId: number, _eventType: string, _actor: string, _note?: string): DeviceEvent {
-    throw new Error('not implemented: SqliteDeviceStore.appendEvent');
+  appendEvent(deviceId: number, eventType: string, actor: string, note?: string): DeviceEvent {
+    this.db
+      .prepare(
+        'INSERT INTO device_events (device_id, event_type, actor, note, created_at) ' +
+          'VALUES (?, ?, ?, ?, datetime(\'now\'))',
+      )
+      .run(deviceId, eventType, actor, note ?? null);
+    const eventId = this.db.prepare('SELECT last_insert_rowid() as id').get() as { id: number };
+    return this.listEvents(deviceId).find((e) => e.id === eventId.id)!;
   }
 
-  listEvents(_deviceId: number): DeviceEvent[] {
-    throw new Error('not implemented: SqliteDeviceStore.listEvents');
+  listEvents(deviceId: number): DeviceEvent[] {
+    const rows = this.db.prepare(LIST_EVENTS).all(deviceId) as Record<string, unknown>[];
+    return rows.map(mapEvent);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Query strings
+// ---------------------------------------------------------------------------
+
+const QUERY_BY_ID =
+  'SELECT id, asset_tag, donation_id, model, serial, status, ' +
+  'wipe_method, wipe_date, wipe_operator, replaces_device_id, ' +
+  'replaced_by_device_id, created_at FROM devices WHERE id = ?';
+
+const QUERY_BY_ASSET_TAG =
+  'SELECT id, asset_tag, donation_id, model, serial, status, ' +
+  'wipe_method, wipe_date, wipe_operator, replaces_device_id, ' +
+  'replaced_by_device_id, created_at FROM devices WHERE asset_tag = ?';
+
+const QUERY_BY_SERIAL =
+  'SELECT id, asset_tag, donation_id, model, serial, status, ' +
+  'wipe_method, wipe_date, wipe_operator, replaces_device_id, ' +
+  'replaced_by_device_id, created_at FROM devices WHERE serial = ?';
+
+const LIST_BY_DONATION =
+  'SELECT id, asset_tag, donation_id, model, serial, status, ' +
+  'wipe_method, wipe_date, wipe_operator, replaces_device_id, ' +
+  'replaced_by_device_id, created_at FROM devices ' +
+  'WHERE donation_id = ? ORDER BY id';
+
+const LIST_ALL =
+  'SELECT id, asset_tag, donation_id, model, serial, status, ' +
+  'wipe_method, wipe_date, wipe_operator, replaces_device_id, ' +
+  'replaced_by_device_id, created_at FROM devices ORDER BY id';
+
+const LIST_EVENTS =
+  'SELECT id, device_id, event_type, actor, note, created_at ' +
+  'FROM device_events WHERE device_id = ? ORDER BY created_at, id';
+
+// ---------------------------------------------------------------------------
+// Row → domain type mapping (snake_case DB → camelCase domain)
+// ---------------------------------------------------------------------------
+
+function mapDevice(row: Record<string, unknown> | undefined): Device | null {
+  if (!row) return null;
+  return {
+    id: row.id as number,
+    assetTag: row.asset_tag as string,
+    donationId: row.donation_id as number,
+    model: row.model as string,
+    serial: row.serial as string,
+    status: row.status as DeviceStatus,
+    wipeMethod: (row.wipe_method as string | null) ?? null,
+    wipeDate: (row.wipe_date as string | null) ?? null,
+    wipeOperator: (row.wipe_operator as string | null) ?? null,
+    replacesDeviceId: (row.replaces_device_id as number | null) ?? null,
+    replacedByDeviceId: (row.replaced_by_device_id as number | null) ?? null,
+    createdAt: row.created_at as string,
+  };
+}
+
+function mapEvent(row: Record<string, unknown>): DeviceEvent {
+  return {
+    id: row.id as number,
+    deviceId: row.device_id as number,
+    eventType: row.event_type as string,
+    actor: row.actor as string,
+    note: (row.note as string | null) ?? null,
+    createdAt: row.created_at as string,
+  };
 }
