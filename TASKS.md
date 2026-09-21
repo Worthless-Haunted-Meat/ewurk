@@ -74,12 +74,12 @@ Goal: implement family CRUD/search, the one-screen family summary (device + wipe
 ## T6: Seed data and final integration
 
 Requirements: R23
-Files: src/seed.ts, README.md
+Files: src/seed.ts, README.md, src/server.ts, src/http/routes/api.ts, src/http/routes/auth.ts, src/http/routes/classes.ts, src/http/routes/devices.ts, src/http/routes/donations.ts, src/http/routes/families.ts, src/http/routes/leases.ts, views/classes/detail.ejs, views/classes/list.ejs, views/dashboard.ejs, views/devices/detail.ejs, views/devices/list.ejs, views/donations/acknowledgment.ejs, views/donations/detail.ejs, views/donations/list.ejs, views/errors/forbidden.ejs, views/errors/generic.ejs, views/families/detail.ejs, views/families/list.ejs, views/leases/detail.ejs, views/leases/list.ejs, views/login.ejs, views/partials/nav.ejs
 Ports: (none new — composes the services T1–T5 already implemented)
 Tests: test/seed.test.ts, plus the full suite (all of test/*.test.ts and test/e2e/*.spec.ts)
 Commands: node --import tsx --test test/seed.test.ts, npm test, npm run lint, npm run typecheck, npm run build
 Parallel: no
-Out of scope: any adapter, service, route, or view file — this task only fills in src/seed.ts (per its doc comment's exact literals — serial prefix `SN-SEED-`, family names `Herrera Family` / `Osei Family` — several tests depend on them verbatim) and finishes README.md's install/run/seed/test instructions to match what actually ships
+Out of scope: any adapter or service file — T1-T5 own those, and a failing view test is never a reason to change domain logic. This task owns the web layer (server, routes, views) that the six Playwright specs drive, and fills in src/seed.ts (per its doc comment's exact literals — serial prefix `SN-SEED-`, family names `Herrera Family` / `Osei Family` — several tests depend on them verbatim) and finishes README.md's install/run/seed/test instructions to match what actually ships
 Goal: make `npm run seed` populate the exact demo dataset R23 requires (one donation with 5 items, 4+ distinct device lifecycle stages, 2 leases, 1 visible swap), and get the entire test suite — unit, adapter, route, and the six Playwright workflow specs — green from a fresh clone.
 
 ```json tasks
