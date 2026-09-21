@@ -4,6 +4,7 @@ import { createApp } from './app.js';
 import type { AppDeps } from './deps.js';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
+import { realpathSync } from 'node:fs';
 import { SystemClock } from './adapters/clock/SystemClock.js';
 import { SqliteUserStore, SqliteTokenStore, SqliteSessionStore } from './adapters/sqlite/authAdapters.js';
 import { DevOutboxMailer } from './adapters/mail/DevOutboxMailer.js';
@@ -85,10 +86,27 @@ function main(): void {
   });
 }
 
-// Only start the server when this file is the CLI entry point.
+// Only start the server when this file is the CLI entry point (so that
+// `import { buildDeps } from './server.js'` in src/seed.ts / tests never
+// triggers a real HTTP listener as a side effect). `resolve()` alone is
+// not enough here: it normalizes a path string but does not resolve
+// symlinks, so on a checkout under a symlinked temp dir (e.g. macOS's
+// /tmp -> /private/tmp, /var -> /private/var) `process.argv[1]` and
+// `import.meta.url` can each be reported through a different symlink
+// alias for the *same* file, making a strict string comparison fail —
+// which would silently skip `main()` and leave the process listening on
+// nothing, exactly the "process starts, never answers" failure mode this
+// guard must not produce. Resolve both sides to their real path before
+// comparing, and if that check can't be completed for any reason, fail
+// open (start the server) rather than fail closed (silently don't).
 if (process.argv[1]) {
-  const __filename = fileURLToPath(import.meta.url);
-  if (resolve(process.argv[1]) === __filename) {
+  try {
+    const invoked = realpathSync(resolve(process.argv[1]));
+    const thisFile = realpathSync(fileURLToPath(import.meta.url));
+    if (invoked === thisFile) {
+      main();
+    }
+  } catch {
     main();
   }
 }
