@@ -2,6 +2,8 @@ import type { DatabaseSync } from 'node:sqlite';
 import { openDb } from './db/connection.js';
 import { createApp } from './app.js';
 import type { AppDeps } from './deps.js';
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { SystemClock } from './adapters/clock/SystemClock.js';
 import { SqliteUserStore, SqliteTokenStore, SqliteSessionStore } from './adapters/sqlite/authAdapters.js';
 import { DevOutboxMailer } from './adapters/mail/DevOutboxMailer.js';
@@ -83,4 +85,10 @@ function main(): void {
   });
 }
 
-main();
+// Only start the server when this file is the CLI entry point.
+if (process.argv[1]) {
+  const __filename = fileURLToPath(import.meta.url);
+  if (resolve(process.argv[1]) === __filename) {
+    main();
+  }
+}

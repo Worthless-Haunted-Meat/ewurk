@@ -38,9 +38,14 @@ npm run dev
 npm run seed
 ```
 
-Creates one donation with items, five devices spread across different
-lifecycle stages, two leases, and one swap — see `REQUIREMENTS.md` R23.
-Run it before `npm start` (or restart the server after seeding).
+Populates the demo dataset (R23): one donation with items, five devices
+spread across 4+ lifecycle stages (received, triaged, available, repair),
+two families (`Herrera Family`, `Osei Family`) with leases, one device
+swap, three users (one per role), one sample payment, and one class
+session with attendance roster.
+
+> Note: `npm run seed` creates a server on port 3000 — stop any
+> running server before or after seeding.
 
 ## Sign-in (dev/test)
 
