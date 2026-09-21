@@ -1,12 +1,11 @@
 import type { Clock } from '../../ports/clock.js';
 
-/** STUB — implemented by T1. Every method throws until then. */
 export class SystemClock implements Clock {
   now(): Date {
-    throw new Error('not implemented: SystemClock.now');
+    return new Date();
   }
 
   todayISO(): string {
-    throw new Error('not implemented: SystemClock.todayISO');
+    return this.now().toISOString().slice(0, 10);
   }
 }

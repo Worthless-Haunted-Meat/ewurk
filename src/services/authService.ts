@@ -1,25 +1,18 @@
+import { createHash, randomBytes } from 'node:crypto';
 import type { User } from '../domain/types.js';
 import type { UserStore, TokenStore, SessionStore, Mailer, AuthServicePort } from '../ports/auth.js';
 import type { Clock } from '../ports/clock.js';
+import { AppError } from '../http/errors.js';
 
 /**
- * STUB — implemented by T1. Real implementation notes (see DESIGN.md §3):
- * - requestMagicLink(email): look up the user via `users.findByEmail`. If
- *   none, return silently (never reveal whether an email is registered).
- *   Otherwise: generate a random raw token (`crypto.randomBytes(32).toString('hex')`,
- *   `import { randomBytes, createHash } from 'node:crypto'`), hash it
- *   (`createHash('sha256').update(rawToken).digest('hex')`), `tokens.issue(user.id, hash, expiresAtISO)`
- *   with `expiresAt` = now + 15 minutes, then `mailer.send(email, 'Your EWURK sign-in link',
- *   body-containing-the-URL 'http://localhost:3000/auth/verify?token=' + rawToken)`.
- *   Never persist or log the raw token anywhere except the outbox body.
- * - verifyMagicLink(rawToken): hash it the same way, `tokens.consume(hash)`.
- *   If null, throw `new AppError('INVALID_TOKEN')` (import from
- *   '../http/errors.js'). Otherwise `sessions.create(userId, expiresAtISO)`
- *   with expiresAt = now + 12 hours, load the user via `users.getById`,
- *   return `{ sessionId, user }`.
- * - getSessionUser(sessionId): `sessions.get(sessionId)`; if null or
- *   expired, return null. Otherwise `users.getById(userId)`.
- * - logout(sessionId): `sessions.destroy(sessionId)`.
+ * Magic-link authentication service.
+ * - requestMagicLink(email): look up the user; if none, return silently.
+ *   Generate a random raw token, hash it, store it with 15-minute expiry,
+ *   and send a sign-in link via the mailer.
+ * - verifyMagicLink(rawToken): hash the token, consume it (single-use).
+ *   If valid, create a 12-hour session and return { sessionId, user }.
+ * - getSessionUser(sessionId): look up the session and return the user.
+ * - logout(sessionId): destroy the session.
  */
 export class AuthService implements AuthServicePort {
   constructor(
@@ -30,19 +23,39 @@ export class AuthService implements AuthServicePort {
     private clock: Clock,
   ) {}
 
-  requestMagicLink(_email: string): void {
-    throw new Error('not implemented: AuthService.requestMagicLink');
+  requestMagicLink(email: string): void {
+    const user = this.users.findByEmail(email);
+    if (!user) return;
+    const rawToken = randomBytes(32).toString('hex');
+    const hash = createHash('sha256').update(rawToken).digest('hex');
+    const expiresAt = new Date(this.clock.now().getTime() + 15 * 60 * 1000).toISOString();
+    this.tokens.issue(user.id, hash, expiresAt);
+    this.mailer.send(
+      email,
+      'Your EWURK sign-in link',
+      `Sign in: http://localhost:3000/auth/verify?token=${rawToken}`,
+    );
   }
 
-  verifyMagicLink(_rawToken: string): { sessionId: string; user: User } {
-    throw new Error('not implemented: AuthService.verifyMagicLink');
+  verifyMagicLink(rawToken: string): { sessionId: string; user: User } {
+    const hash = createHash('sha256').update(rawToken).digest('hex');
+    const userId = this.tokens.consume(hash);
+    if (userId === null) throw new AppError('INVALID_TOKEN');
+    const expiresAt = new Date(this.clock.now().getTime() + 12 * 60 * 60 * 1000).toISOString();
+    const sessionId = this.sessions.create(userId, expiresAt);
+    const user = this.users.getById(userId);
+    if (!user) throw new AppError('INVALID_TOKEN');
+    return { sessionId, user };
   }
 
-  getSessionUser(_sessionId: string): User | null {
-    throw new Error('not implemented: AuthService.getSessionUser');
+  getSessionUser(sessionId: string): User | null {
+    const session = this.sessions.get(sessionId);
+    if (!session) return null;
+    const user = this.users.getById(session.userId);
+    return user;
   }
 
-  logout(_sessionId: string): void {
-    throw new Error('not implemented: AuthService.logout');
+  logout(sessionId: string): void {
+    this.sessions.destroy(sessionId);
   }
 }

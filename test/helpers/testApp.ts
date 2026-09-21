@@ -68,6 +68,7 @@ export class FakeUserStore implements UserStore {
 
 export class FakeTokenStore implements TokenStore {
   tokens: Array<{ userId: number; hash: string; expiresAt: string; usedAt: string | null }> = [];
+  constructor(private clock: FakeClock = new FakeClock()) {}
   issue(userId: number, tokenHash: string, expiresAt: string): void {
     this.tokens.push({ userId, hash: tokenHash, expiresAt, usedAt: null });
   }
@@ -75,8 +76,8 @@ export class FakeTokenStore implements TokenStore {
     const row = this.tokens.find((t) => t.hash === tokenHash);
     if (!row) return null;
     if (row.usedAt) return null;
-    if (new Date(row.expiresAt).getTime() < Date.now()) return null;
-    row.usedAt = new Date().toISOString();
+    if (new Date(row.expiresAt).getTime() < this.clock.now().getTime()) return null;
+    row.usedAt = this.clock.now().toISOString();
     return row.userId;
   }
 }
