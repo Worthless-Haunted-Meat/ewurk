@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+coverage/
+*.db
+*.sqlite
+*.sqlite3
+.env
+.qwen/
+.aider*
+.cursor/worktrees/
+.playwright-mcp/
