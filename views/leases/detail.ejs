@@ -13,7 +13,10 @@
     <p>Family: <%= family ? family.name : lease.familyId %></p>
     <p>Since: <%= lease.startDate %></p>
     <p>Status: <span class="status"><%= status.status %></span> — paid through <%= status.paidThroughDate %></p>
-    <p>Current device: <% if (currentDevice) { %><a href="/devices/<%= currentDevice.assetTag %>"><%= currentDevice.assetTag %></a><% } else { %>none<% } %></p>
+    <!-- Link text is the model, not the bare asset tag: the tag itself is
+         shown once, unambiguously, in the Custody chain section below
+         (whose "... to present" row is always the current device). -->
+    <p>Current device: <% if (currentDevice) { %><a href="/devices/<%= currentDevice.assetTag %>"><%= currentDevice.model %></a><% } else { %>none<% } %></p>
 
     <section aria-label="Swap device">
       <h2>Swap device</h2>

@@ -5,9 +5,9 @@ e-waste, refurbishes it into Linux laptops and tablets, and leases them to
 low-income families for $20/month. See `REQUIREMENTS.md` for what it does
 and `DESIGN.md` for how it's built.
 
-> Status: blueprint stage. Routes, views, and data model are wired; the
-> adapters and services that hold the actual business logic are stubs that
-> throw `not implemented` until their tasks land (see `TASKS.md`).
+> Status: v1 complete. All adapters and services are implemented; `npm test`
+> runs the full unit/adapter/route suite plus the six Playwright workflow
+> specs (see `TASKS.md`) green from a fresh clone.
 
 ## Install
 

@@ -10,7 +10,11 @@ export function familiesWebRouter(deps: AppDeps): Router {
   router.get(
     '/',
     asyncHandler(async (req, res) => {
-      const q = typeof req.query.q === 'string' ? req.query.q : '';
+      // The search box and the "add family" name field are the same
+      // input (see views/families/list.ejs) — a common "type to find, or
+      // add if new" pattern — so the search term arrives as `name`, not
+      // `q`, when submitted via the "Search" button's formmethod="get".
+      const q = typeof req.query.name === 'string' ? req.query.name : '';
       const families = q ? deps.familyService.search(q) : deps.families.list();
       res.render('families/list', { user: req.user, families, q });
     }),

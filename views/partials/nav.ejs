@@ -2,7 +2,7 @@
   <a href="/" class="brand">EWURK</a>
   <% if (user) { %>
     <% if (user.role === 'staff' || user.role === 'volunteer') { %>
-      <a href="/donations">Donations list</a>
+      <a href="/donations">Donations</a>
       <a href="/devices">Devices</a>
     <% } %>
     <% if (user.role === 'staff') { %>

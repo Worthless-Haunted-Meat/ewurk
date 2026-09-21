@@ -9,24 +9,19 @@
 <body>
   <%- include('../partials/nav', { user: user }) %>
   <main>
-    <h1>Families list</h1>
+    <h1>Families</h1>
 
-    <form method="get" action="/families" role="search">
-      <label for="q">Search</label>
-      <input type="text" id="q" name="q" value="<%= q %>" aria-label="Search by name" placeholder="Search by name">
-      <button type="submit">Search</button>
-    </form>
-
-    <section aria-label="New family">
-      <h2>New family</h2>
-      <form method="post" action="/families">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required>
+    <section aria-label="Find or add a family">
+      <h2>Find or add a family</h2>
+      <form>
+        <label for="name">Search by name</label>
+        <input type="text" id="name" name="name" value="<%= q %>" required>
         <label for="contact">Contact</label>
         <input type="text" id="contact" name="contact" required>
         <label for="neighborhood">Neighborhood / referral</label>
         <input type="text" id="neighborhood" name="neighborhood">
-        <button type="submit">Add family</button>
+        <button type="submit" formmethod="get" formaction="/families" formnovalidate>Search</button>
+        <button type="submit" formmethod="post" formaction="/families">Add family</button>
       </form>
     </section>
 

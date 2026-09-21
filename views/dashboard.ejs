@@ -11,19 +11,7 @@
   <main>
     <h1>Welcome</h1>
     <p>Signed in as <%= user.role %> — <%= user.name %>.</p>
-    <ul class="quick-links">
-      <% if (user.role === 'staff' || user.role === 'volunteer') { %>
-        <li><a href="/donations">Donations</a></li>
-        <li><a href="/devices">Devices</a></li>
-      <% } %>
-      <% if (user.role === 'staff') { %>
-        <li><a href="/families">Families</a></li>
-        <li><a href="/leases">Leases</a></li>
-      <% } %>
-      <% if (user.role === 'staff' || user.role === 'instructor') { %>
-        <li><a href="/classes">Classes</a></li>
-      <% } %>
-    </ul>
+    <p>Use the navigation above to get started.</p>
   </main>
 </body>
 </html>
