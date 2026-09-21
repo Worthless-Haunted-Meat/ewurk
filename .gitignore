@@ -10,3 +10,6 @@ coverage/
 .aider*
 .cursor/worktrees/
 .playwright-mcp/
+playwright-report/
+test-results/
+data/

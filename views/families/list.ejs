@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Families — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1>Families</h1>
+
+    <form method="get" action="/families" role="search">
+      <label for="q">Search by name</label>
+      <input type="text" id="q" name="q" value="<%= q %>">
+      <button type="submit">Search</button>
+    </form>
+
+    <section aria-label="New family">
+      <h2>New family</h2>
+      <form method="post" action="/families">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+        <label for="contact">Contact</label>
+        <input type="text" id="contact" name="contact" required>
+        <label for="neighborhood">Neighborhood / referral</label>
+        <input type="text" id="neighborhood" name="neighborhood">
+        <button type="submit">Add family</button>
+      </form>
+    </section>
+
+    <ul>
+      <% families.forEach(function(f) { %>
+        <li><a href="/families/<%= f.id %>"><%= f.name %></a></li>
+      <% }); %>
+    </ul>
+  </main>
+</body>
+</html>

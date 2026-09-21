@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acknowledgment — <%= letter.donorOrg %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <article class="letter">
+      <h1>Contemporaneous Written Acknowledgment</h1>
+      <p>Donor: <strong><%= letter.donorOrg %></strong></p>
+      <p>Date of donation: <%= letter.pickupDate %></p>
+      <p>Description of property received:</p>
+      <ul>
+        <% letter.items.forEach(function(it) { %>
+          <li><%= it.model %> — <%= it.assetTag %></li>
+        <% }); %>
+      </ul>
+      <p>No goods or services were provided in exchange for this donation.</p>
+      <p>Acknowledged: <%= letter.acknowledgedAt %></p>
+    </article>
+  </main>
+</body>
+</html>

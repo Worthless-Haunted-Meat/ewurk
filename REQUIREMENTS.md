@@ -312,11 +312,15 @@ and their class attendance on one screen.
   `QWEN.md` and a one-line `README.md` — no application code exists yet.
   Requirements describe the whole v1 product.
 - Stack: Node.js + TypeScript, Express, server-rendered EJS views (auto-
-  escaping by default), `better-sqlite3` for storage. Chosen over the
-  experimental built-in `node:sqlite` because it is stable, is the most
-  widely used SQLite binding in the Node ecosystem, and gives the strongest
-  test tooling — the "prefer built-ins" constraint is a preference, not an
-  absolute, and is outweighed here by maturity and tooling.
+  escaping by default), Node's built-in `node:sqlite` (`DatabaseSync`) for
+  storage — no native addon, so `npm ci` never depends on a C++ toolchain
+  or a prebuilt binary matching the exact Node/OS/arch. (An earlier draft
+  of this decision picked `better-sqlite3` for its maturity; that was
+  reversed after `npm install` was actually run against this repo's
+  pinned Node version and `better-sqlite3`'s native build failed against
+  a newer V8 API — exactly the failure mode the "prefer built-ins"
+  constraint exists to avoid. `node:sqlite` requires Node >=22.5; see the
+  bumped `engines` field.)
 - Persistence: **SQLite only for v1**, file-backed by default
   (`data/ewurk.db`), in-memory for tests. The job brief's "Shape" section
   mentions Postgres/Azure hosting, but the operator's explicit constraint

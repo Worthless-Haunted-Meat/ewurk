@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Not authorized — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <div role="alert">
+      <h1>Not authorized</h1>
+      <p>You are not authorized to view this page.</p>
+    </div>
+    <p><a href="/">Back to dashboard</a></p>
+  </main>
+</body>
+</html>

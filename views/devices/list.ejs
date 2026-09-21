@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devices — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1>Devices</h1>
+
+    <form method="get" action="/devices" role="search">
+      <label for="serial">Search by serial number</label>
+      <input type="text" id="serial" name="serial" value="<%= serial %>">
+      <button type="submit">Search</button>
+    </form>
+
+    <ul>
+      <% devices.forEach(function(d) { %>
+        <li>
+          <a href="/devices/<%= d.assetTag %>"><%= d.assetTag %></a>
+          — <%= d.model %> — serial <%= d.serial %> — <span class="status"><%= d.status %></span>
+          <br>
+          donor: <%= d.donorOrg %>
+          <% if (d.wipeOperator) { %> — wiped by <%= d.wipeOperator %><% } %>
+          — holder: <%= d.holder %>
+        </li>
+      <% }); %>
+    </ul>
+    <% if (devices.length === 0) { %>
+      <p>No devices found.</p>
+    <% } %>
+  </main>
+</body>
+</html>

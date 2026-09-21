@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Donations — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1>Donations</h1>
+
+    <section aria-label="New donation">
+      <h2>New donation</h2>
+      <form method="post" action="/donations">
+        <label for="donorOrg">Donor organization</label>
+        <input type="text" id="donorOrg" name="donorOrg" required>
+        <label for="pickupDate">Pickup date</label>
+        <input type="date" id="pickupDate" name="pickupDate" required>
+        <button type="submit">Create donation</button>
+      </form>
+    </section>
+
+    <section aria-label="Donation list">
+      <h2>All donations</h2>
+      <ul>
+        <% donations.forEach(function(d) { %>
+          <li>
+            <a href="/donations/<%= d.id %>"><%= d.donorOrg %></a>
+            — <%= d.pickupDate %> — <span class="status"><%= d.status %></span>
+          </li>
+        <% }); %>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= session.topic %> — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1><%= session.topic %></h1>
+    <p><%= session.sessionDate %></p>
+
+    <form method="post" action="/classes/<%= session.id %>/roster">
+      <button type="submit">Build roster</button>
+    </form>
+
+    <section aria-label="Roster">
+      <h2>Roster</h2>
+      <ul>
+        <% attendance.forEach(function(a) { %>
+          <li>
+            <%= a.family ? a.family.name : ('family ' + a.familyId) %>
+            — <%= a.present ? 'present' : 'absent' %>
+            <form method="post" action="/classes/<%= session.id %>/attendance" class="inline">
+              <input type="hidden" name="familyId" value="<%= a.familyId %>">
+              <input type="hidden" name="present" value="<%= a.present ? 'false' : 'true' %>">
+              <button type="submit"><%= a.present ? 'Mark absent' : 'Mark present' %></button>
+            </form>
+          </li>
+        <% }); %>
+      </ul>
+      <% if (attendance.length === 0) { %>
+        <p>No roster yet — build one from active leases.</p>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

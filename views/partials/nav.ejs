@@ -1,0 +1,20 @@
+<nav aria-label="Main">
+  <a href="/" class="brand">EWURK</a>
+  <% if (user) { %>
+    <% if (user.role === 'staff' || user.role === 'volunteer') { %>
+      <a href="/donations">Donations</a>
+      <a href="/devices">Devices</a>
+    <% } %>
+    <% if (user.role === 'staff') { %>
+      <a href="/families">Families</a>
+      <a href="/leases">Leases</a>
+    <% } %>
+    <% if (user.role === 'staff' || user.role === 'instructor') { %>
+      <a href="/classes">Classes</a>
+    <% } %>
+    <span class="who"><%= user.name %> (<%= user.role %>)</span>
+    <form method="post" action="/auth/logout" class="inline">
+      <button type="submit">Sign out</button>
+    </form>
+  <% } %>
+</nav>

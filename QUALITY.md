@@ -1,8 +1,9 @@
 # EWURK — Quality standard
 
-Stack: Node.js + TypeScript, Express, server-rendered EJS views,
-`better-sqlite3`, `node:test` for unit/API tests, Playwright Test for
-browser-flow tests. See `REQUIREMENTS.md` § Decisions for why.
+Stack: Node.js (>=22.5) + TypeScript, Express, server-rendered EJS views,
+Node's built-in `node:sqlite` (no native addon), `node:test` for unit/API
+tests, Playwright Test for browser-flow tests. See `REQUIREMENTS.md` §
+Decisions for why `node:sqlite` over a native binding.
 
 ## 1. Quality bar
 
