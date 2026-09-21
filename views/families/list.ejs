@@ -12,8 +12,8 @@
     <h1>Families</h1>
 
     <form method="get" action="/families" role="search">
-      <label for="q">Search by name</label>
-      <input type="text" id="q" name="q" value="<%= q %>">
+      <label for="q">Search</label>
+      <input type="text" id="q" name="q" value="<%= q %>" aria-label="Search by name" placeholder="Search by name">
       <button type="submit">Search</button>
     </form>
 
