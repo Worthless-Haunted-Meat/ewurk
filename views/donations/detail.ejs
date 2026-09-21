@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= donation.donorOrg %> — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1><%= donation.donorOrg %></h1>
+    <p>Pickup: <%= donation.pickupDate %> — status: <span class="status"><%= donation.status %></span></p>
+
+    <% if (items.length > 0) { %>
+      <p><a href="/donations/<%= donation.id %>/acknowledgment">Generate acknowledgment letter</a></p>
+    <% } else { %>
+      <p>Receive at least one item before generating an acknowledgment.</p>
+    <% } %>
+
+    <section aria-label="Receive item">
+      <h2>Receive item</h2>
+      <form method="post" action="/donations/<%= donation.id %>/items">
+        <label for="model">Model</label>
+        <input type="text" id="model" name="model" required>
+        <label for="serial">Serial number</label>
+        <input type="text" id="serial" name="serial" required>
+        <button type="submit">Receive item</button>
+      </form>
+    </section>
+
+    <section aria-label="Items">
+      <h2>Items (<%= items.length %>)</h2>
+      <ul>
+        <% items.forEach(function(it) { %>
+          <li>
+            <a href="/devices/<%= it.assetTag %>"><%= it.assetTag %></a>
+            — <%= it.model %> — <span class="status"><%= it.status %></span>
+          </li>
+        <% }); %>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

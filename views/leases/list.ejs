@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leases — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1>Leases</h1>
+    <ul>
+      <% leases.forEach(function(row) { %>
+        <li>
+          <a href="/leases/<%= row.lease.id %>">
+            <%= row.family ? row.family.name : ('family ' + row.lease.familyId) %>
+          </a>
+          — <%= row.currentDevice ? row.currentDevice.assetTag : 'no device' %>
+          — <span class="status"><%= row.status.status %></span>
+        </li>
+      <% }); %>
+    </ul>
+    <% if (leases.length === 0) { %>
+      <p>No leases yet.</p>
+    <% } %>
+  </main>
+</body>
+</html>

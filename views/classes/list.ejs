@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Classes — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1>Classes</h1>
+
+    <section aria-label="New session">
+      <h2>New session</h2>
+      <form method="post" action="/classes">
+        <label for="sessionDate">Date</label>
+        <input type="date" id="sessionDate" name="sessionDate" required>
+        <label for="topic">Topic</label>
+        <input type="text" id="topic" name="topic" required>
+        <button type="submit">Create session</button>
+      </form>
+    </section>
+
+    <ul>
+      <% sessions.forEach(function(s) { %>
+        <li><a href="/classes/<%= s.id %>"><%= s.sessionDate %> — <%= s.topic %></a></li>
+      <% }); %>
+    </ul>
+  </main>
+</body>
+</html>

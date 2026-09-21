@@ -1,0 +1,86 @@
+/* Mobile-first: single column, large tap targets, no horizontal scroll. */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #14432a;
+}
+nav a, nav .who, nav button {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+}
+nav .brand { font-weight: bold; font-size: 1.2rem; }
+nav button {
+  background: none;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+}
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.2rem; margin-top: 1.5rem; }
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+form.inline { flex-direction: row; align-items: center; display: inline-flex; }
+label { font-weight: 600; }
+input, select, button {
+  font-size: 1rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  min-height: 44px; /* large tap target */
+}
+button {
+  background: #14432a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+ul { padding-left: 1.2rem; }
+li { margin-bottom: 0.5rem; }
+.status {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #e2e2e2;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+[role="alert"] {
+  background: #fde8e8;
+  border: 1px solid #f5b5b5;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+[role="status"] {
+  background: #e8f5e9;
+  border: 1px solid #b5e5b5;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.4rem; border-bottom: 1px solid #ddd; }
+
+@media (min-width: 700px) {
+  main { padding: 2rem; }
+}
