@@ -21,7 +21,7 @@ Start command and probe:
 
 ```json quality
 { "bar": { "install": "npm ci && npx playwright install chromium", "lint": "npm run lint", "typecheck": "npm run typecheck", "test": "npm test", "build": "npm run build" },
-  "start": { "command": "npm start", "probe": { "http": "/", "expect": 200, "timeout_s": 30 } },
+  "start": { "command": "npm run build && npm start", "probe": { "http": "/", "expect": 200, "timeout_s": 30 } },
   "hygiene_never_tracked": ["node_modules/", "dist/", "build/", "coverage/", "*.db", "*.sqlite", "*.sqlite3", ".env", ".qwen/", ".aider*", ".cursor/worktrees/", ".playwright-mcp/", "playwright-report/", "test-results/"],
   "rubric_targets": { "correctness": 5, "security": 5, "validation": 4, "tests": 4, "structure": 4, "ux": 4, "readme": 4 } }
 ```
