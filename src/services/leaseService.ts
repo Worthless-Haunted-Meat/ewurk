@@ -3,7 +3,6 @@ import type { LeaseStore, PaymentStore } from '../ports/lease.js';
 import type { DeviceLifecyclePort } from '../ports/device.js';
 import type { FamilyStore } from '../ports/family.js';
 import type { Clock } from '../ports/clock.js';
-import { AppError } from '../http/errors.js';
 
 /**
  * STUB — implemented by T4. Real implementation notes (see DESIGN.md §3, §4):
@@ -42,25 +41,8 @@ export class LeaseService {
     private clock: Clock,
   ) {}
 
-  createLease(familyId: number, assetTag: string, actor: string): Lease {
-    const family = this.families.getById(familyId);
-    if (!family) throw new AppError('NOT_FOUND');
-
-    const device = this.deviceLifecycle.getByAssetTag(assetTag);
-    if (!device) throw new AppError('NOT_FOUND');
-
-    const existing = this.leases.findActiveByFamily(familyId);
-    if (existing) throw new AppError('DUPLICATE_ACTIVE_LEASE');
-
-    // Verify device is actually available (not just that we can reach 'leased')
-    if (device.status !== 'available') {
-      throw new AppError('DEVICE_NOT_AVAILABLE');
-    }
-
-    const lease = this.leases.create({ familyId, startDate: this.clock.todayISO() });
-    this.deviceLifecycle.transitionDevice(device.id, 'leased', actor);
-    this.leases.addCustody(lease.id, device.id, this.clock.todayISO());
-    return lease;
+  createLease(_familyId: number, _assetTag: string, _actor: string): Lease {
+    throw new Error('not implemented: LeaseService.createLease');
   }
 
   swap(_leaseId: number, _newAssetTag: string, _actor: string): Lease {

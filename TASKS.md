@@ -2,8 +2,10 @@
 
 Six tasks. `T1`–`T5` each implement one bounded context's adapters and
 service (currently stubs that throw `not implemented: <name>`) against the
-ports and algorithms fixed in `DESIGN.md`; none of them share a file or a
-port, so they are safe to run in any order or in parallel. `T6` seeds real
+ports and algorithms fixed in `DESIGN.md`; they share no file, but they are
+**not** order-independent: `test/devices.test.ts` (R8) calls the real
+`LeaseService.createLease`, so `T4` must land before `T3`. The order below is
+the order to run. `T6` seeds real
 data end-to-end and can only run once `T1`–`T5` are done, since it drives
 every service for real. Every task must leave `npm run lint` and
 `npm run typecheck` passing across the **whole** repo (not just its own
@@ -36,17 +38,6 @@ Parallel: yes
 Out of scope: auth, devices, leases, families, classes, routes, views, seed.ts
 Goal: implement donation intake and the value-free acknowledgment letter exactly per DESIGN.md §3/§5 and the doc comments in SqliteDonationStore.ts/donationService.ts — R4 must hold because no price/value field is ever read, not because of a filter.
 
-## T3: Devices
-
-Requirements: R5, R6, R7, R8
-Files: src/adapters/sqlite/SqliteDeviceStore.ts, src/services/deviceService.ts
-Ports: DeviceStore, DeviceLifecyclePort
-Tests: test/devices.test.ts
-Commands: node --import tsx --test test/devices.test.ts, npm run lint, npm run typecheck
-Parallel: yes
-Out of scope: auth, donations, leases, families, classes, routes, views, seed.ts
-Goal: implement the device lifecycle store and the one guarded transition function exactly per DESIGN.md §4 (order of checks matters: NOT_FOUND, then INVALID_TRANSITION, then WIPE_FIELDS_REQUIRED on the way into `wiped`, then WIPE_REQUIRED on the way into `available` — this last check must run every time regardless of how the device reached its current status).
-
 ## T4: Leases & payments
 
 Requirements: R9, R10, R11, R12, R13, R14, R15
@@ -57,6 +48,17 @@ Commands: node --import tsx --test test/leases.test.ts, npm run lint, npm run ty
 Parallel: yes
 Out of scope: auth, donations, devices, families, classes, routes, views, seed.ts — in particular, never write `devices.status` directly; always call the injected `DeviceLifecyclePort.transitionDevice`
 Goal: implement lease creation, swap, custody chain, and the payment ledger/status/hardship-pause exactly per the doc comments in leasePaymentAdapters.ts and leaseService.ts — a device changes state only by going through the injected DeviceLifecyclePort, never by writing status directly, and "behind" is only ever a computed label, never an action.
+
+## T3: Devices
+
+Requirements: R5, R6, R7, R8
+Files: src/adapters/sqlite/SqliteDeviceStore.ts, src/services/deviceService.ts
+Ports: DeviceStore, DeviceLifecyclePort
+Tests: test/devices.test.ts
+Commands: node --import tsx --test test/devices.test.ts, npm run lint, npm run typecheck
+Parallel: yes
+Out of scope: auth, donations, leases, families, classes, routes, views, seed.ts
+Goal: implement the device lifecycle store and the one guarded transition function exactly per DESIGN.md §4 (order of checks matters: NOT_FOUND, then INVALID_TRANSITION, then WIPE_FIELDS_REQUIRED on the way into `wiped`, then WIPE_REQUIRED on the way into `available` — this last check must run every time regardless of how the device reached its current status).
 
 ## T5: Families & classes
 
