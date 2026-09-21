@@ -37,28 +37,32 @@ export class SqliteDonationStore implements DonationStore {
   constructor(private db: DatabaseSync) {}
 
   create(input: { donorOrg: string; pickupDate: string }): Donation {
-    this.db.run(
-      `INSERT INTO donations (donor_org, pickup_date, status, created_at)
-       VALUES (?, ?, 'scheduled', ?)`,
-      input.donorOrg,
-      input.pickupDate,
-      new Date().toISOString(),
-    );
-    return this.getById(this.db.lastInsertRowid as number)!;
+    this.db
+      .prepare(
+        `INSERT INTO donations (donor_org, pickup_date, status, created_at)
+         VALUES (?, ?, 'scheduled', ?)`,
+      )
+      .run(input.donorOrg, input.pickupDate, new Date().toISOString());
+    const result = this.db.prepare('SELECT LAST_INSERT_ROWID() AS id').get();
+    const row = result as { id: number };
+    return this.getById(row.id)!;
   }
 
   getById(id: number): Donation | null {
-    const row = this.db.get(
-      `SELECT id, donor_org, pickup_date, status, created_at
-       FROM donations WHERE id = ?`,
-      id,
-    ) as {
-      id: number;
-      donor_org: string;
-      pickup_date: string;
-      status: DonationStatus;
-      created_at: string;
-    } | undefined;
+    const row = this.db
+      .prepare(
+        `SELECT id, donor_org, pickup_date, status, created_at
+         FROM donations WHERE id = ?`,
+      )
+      .get(id) as
+      | {
+          id: number;
+          donor_org: string;
+          pickup_date: string;
+          status: DonationStatus;
+          created_at: string;
+        }
+      | undefined;
     if (!row) return null;
     return {
       id: row.id,
@@ -70,16 +74,18 @@ export class SqliteDonationStore implements DonationStore {
   }
 
   list(): Donation[] {
-    const rows = this.db.all(
-      `SELECT id, donor_org, pickup_date, status, created_at
-       FROM donations ORDER BY id DESC`,
-    ) as Array<{
-      id: number;
-      donor_org: string;
-      pickup_date: string;
-      status: DonationStatus;
-      created_at: string;
-    }>;
+    const rows = this.db
+      .prepare(
+        `SELECT id, donor_org, pickup_date, status, created_at
+         FROM donations ORDER BY id DESC`,
+      )
+      .all() as Array<{
+        id: number;
+        donor_org: string;
+        pickup_date: string;
+        status: DonationStatus;
+        created_at: string;
+      }>;
     return rows.map((row) => ({
       id: row.id,
       donorOrg: row.donor_org,
@@ -90,14 +96,13 @@ export class SqliteDonationStore implements DonationStore {
   }
 
   updateStatus(id: number, status: DonationStatus): Donation {
-    const existing = this.db.get(
-      `SELECT id FROM donations WHERE id = ?`,
-      id,
-    ) as { id: number } | undefined;
+    const existing = this.db
+      .prepare(`SELECT id FROM donations WHERE id = ?`)
+      .get(id) as { id: number } | undefined;
     if (!existing) {
       throw new AppError('NOT_FOUND');
     }
-    this.db.run(`UPDATE donations SET status = ? WHERE id = ?`, status, id);
+    this.db.prepare(`UPDATE donations SET status = ? WHERE id = ?`).run(status, id);
     return this.getById(id)!;
   }
 }

@@ -87,6 +87,8 @@ export class DonationService {
     }
     text += `\nNo goods or services were provided in exchange for this donation.\n`;
 
+    this.donations.updateStatus(donationId, 'acknowledged');
+
     return {
       donorOrg: donation.donorOrg,
       pickupDate: donation.pickupDate,
