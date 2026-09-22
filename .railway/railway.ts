@@ -14,8 +14,10 @@ export default defineRailway((ctx) => {
 
   const publicUrl = prod ? 'https://ewurk.org' : uat ? 'https://uat.ewurk.org' : 'https://dev.ewurk.org';
 
+  const deployBranch = prod ? 'main' : uat ? 'uat' : 'develop';
+
   const ewurk = service('ewurk', {
-    source: github('Worthless-Haunted-Meat/ewurk', { branch: 'main' }),
+    source: github('Worthless-Haunted-Meat/ewurk', { branch: deployBranch }),
     build: 'npm run build',
     start: 'npm start',
     healthcheck: '/health',
