@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= summary.family.name %> — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1><%= summary.family.name %></h1>
+    <p>Contact: <%= summary.family.contact %><% if (summary.family.neighborhood) { %> — <%= summary.family.neighborhood %><% } %></p>
+
+    <section aria-label="Currently leased">
+      <h2>Device</h2>
+      <% if (summary.currentDevice) { %>
+        <p>
+          <a href="/devices/<%= summary.currentDevice.assetTag %>"><%= summary.currentDevice.assetTag %></a>
+          — <%= summary.currentDevice.model %>
+          <% if (summary.currentDevice.wipeMethod) { %>
+            — wiped <%= summary.currentDevice.wipeDate %> (<%= summary.currentDevice.wipeMethod %>) by <%= summary.currentDevice.wipeOperator %>
+          <% } %>
+        </p>
+      <% } else { %>
+        <p>No device currently leased.</p>
+      <% } %>
+    </section>
+
+    <section aria-label="Payment status">
+      <h2>Payment status</h2>
+      <% if (summary.paymentStatus) { %>
+        <p class="status"><%= summary.paymentStatus.status %> — paid through <%= summary.paymentStatus.paidThroughDate %></p>
+      <% } else { %>
+        <p>No active lease.</p>
+      <% } %>
+    </section>
+
+    <section aria-label="Attendance">
+      <h2>Class attendance</h2>
+      <ul>
+        <% summary.attendance.forEach(function(a) { %>
+          <li><%= a.sessionDate %> — <%= a.topic %> — <%= a.present ? 'present' : 'absent' %></li>
+        <% }); %>
+      </ul>
+      <% if (summary.attendance.length === 0) { %>
+        <p>No class sessions yet.</p>
+      <% } %>
+    </section>
+
+    <% if (summary.activeLease) { %>
+      <p><a href="/leases/<%= summary.activeLease.id %>">View lease</a></p>
+    <% } else { %>
+      <section aria-label="Start lease">
+        <h2>Available device</h2>
+        <form method="post" action="/leases">
+          <input type="hidden" name="familyId" value="<%= summary.family.id %>">
+          <label for="assetTag">Available device</label>
+          <select id="assetTag" name="assetTag" required>
+            <% availableDevices.forEach(function(d) { %>
+              <option value="<%= d.assetTag %>"><%= d.assetTag %> — <%= d.model %></option>
+            <% }); %>
+          </select>
+          <button type="submit">Start lease</button>
+        </form>
+      </section>
+    <% } %>
+  </main>
+</body>
+</html>

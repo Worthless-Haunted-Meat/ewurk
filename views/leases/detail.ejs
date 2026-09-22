@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lease #<%= lease.id %> — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1>Lease #<%= lease.id %></h1>
+    <p>Family: <%= family ? family.name : lease.familyId %></p>
+    <p>Since: <%= lease.startDate %></p>
+    <p>Status: <span class="status"><%= status.status %></span> — paid through <%= status.paidThroughDate %></p>
+    <!-- Link text is the model, not the bare asset tag: the tag itself is
+         shown once, unambiguously, in the Custody chain section below
+         (whose "... to present" row is always the current device). -->
+    <p>Current device: <% if (currentDevice) { %><a href="/devices/<%= currentDevice.assetTag %>"><%= currentDevice.model %></a><% } else { %>none<% } %></p>
+
+    <section aria-label="Swap device">
+      <h2>Swap device</h2>
+      <form method="post" action="/leases/<%= lease.id %>/swap">
+        <label for="newAssetTag">Replacement device</label>
+        <select id="newAssetTag" name="newAssetTag" required>
+          <% availableDevices.forEach(function(d) { %>
+            <option value="<%= d.assetTag %>"><%= d.assetTag %> — <%= d.model %></option>
+          <% }); %>
+        </select>
+        <button type="submit">Swap</button>
+      </form>
+    </section>
+
+    <section aria-label="Record payment">
+      <h2>Record payment</h2>
+      <form method="post" action="/leases/<%= lease.id %>/payments">
+        <label for="amountDollars">Amount ($)</label>
+        <input type="number" id="amountDollars" name="amountDollars" value="20" step="0.01" required>
+        <label for="paidDate">Date</label>
+        <input type="date" id="paidDate" name="paidDate" required>
+        <button type="submit">Record payment</button>
+      </form>
+      <table>
+        <thead><tr><th>Date</th><th>Amount (cents)</th></tr></thead>
+        <tbody>
+          <% payments.forEach(function(p) { %>
+            <tr><td><%= p.paidDate %></td><td><%= p.amountCents %></td></tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-label="Hardship pause">
+      <h2>Hardship pause</h2>
+      <form method="post" action="/leases/<%= lease.id %>/hardship-pause">
+        <input type="hidden" name="paused" value="<%= lease.hardshipPaused ? 'false' : 'true' %>">
+        <button type="submit"><%= lease.hardshipPaused ? 'Resume normal billing' : 'Pause for hardship' %></button>
+      </form>
+    </section>
+
+    <section aria-label="Custody chain">
+      <h2>Custody chain</h2>
+      <ul>
+        <% custody.forEach(function(c) { %>
+          <li><%= c.assetTag %> — <%= c.startedAt %> to <%= c.endedAt || 'present' %></li>
+        <% }); %>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

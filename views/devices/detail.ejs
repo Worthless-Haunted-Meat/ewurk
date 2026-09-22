@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= device.assetTag %> — EWURK</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { user: user }) %>
+  <main>
+    <h1><%= device.assetTag %></h1>
+    <p><%= device.model %> — serial <%= device.serial %> — status <span class="status"><%= device.status %></span></p>
+
+    <% if (device.wipeMethod) { %>
+      <p>Wipe: <%= device.wipeMethod %> on <%= device.wipeDate %> by <%= device.wipeOperator %></p>
+    <% } %>
+    <% if (device.replacesDeviceId) { %>
+      <p>Replaces device id <%= device.replacesDeviceId %></p>
+    <% } %>
+    <% if (device.replacedByDeviceId) { %>
+      <p>Replaced by device id <%= device.replacedByDeviceId %></p>
+    <% } %>
+
+    <% if (showWipeForm) { %>
+      <section aria-label="Record wipe">
+        <h2>Record wipe</h2>
+        <form method="post" action="/devices/<%= device.assetTag %>/transition">
+          <input type="hidden" name="to" value="wiped">
+          <label for="wipeMethod">Wipe method</label>
+          <input type="text" id="wipeMethod" name="wipeMethod" required>
+          <label for="wipeDate">Wipe date</label>
+          <input type="date" id="wipeDate" name="wipeDate" required>
+          <label for="wipeOperator">Operator</label>
+          <input type="text" id="wipeOperator" name="wipeOperator" required>
+          <button type="submit">Record wipe</button>
+        </form>
+      </section>
+    <% } %>
+
+    <% if (showAvailableAction) { %>
+      <form method="post" action="/devices/<%= device.assetTag %>/transition">
+        <input type="hidden" name="to" value="available">
+        <button type="submit">Mark available</button>
+      </form>
+    <% } %>
+
+    <% allowedNext.filter(function(s) { return s !== 'wiped' && s !== 'available'; }).forEach(function(s) { %>
+      <form method="post" action="/devices/<%= device.assetTag %>/transition" class="inline">
+        <input type="hidden" name="to" value="<%= s %>">
+        <button type="submit">Mark <%= s %></button>
+      </form>
+    <% }); %>
+
+    <section aria-label="Timeline">
+      <h2>Timeline</h2>
+      <ul>
+        <% events.forEach(function(e) { %>
+          <li><%= e.createdAt %> — <%= e.eventType %> — <%= e.actor %></li>
+        <% }); %>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
