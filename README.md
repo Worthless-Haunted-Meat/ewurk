@@ -105,12 +105,25 @@ use the same curl flow as local dev above) and follow the verify URL.
 
 ### Sign-in on production
 
-`NODE_ENV=production` with no SMTP configuration: requesting a magic link
-for a known user shows an error that outbound email is not configured;
-`/dev/outbox` is not mounted.
+`NODE_ENV=production` with neither the Noctusoft relay nor SMTP configured:
+requesting a magic link for a known user shows an error that outbound email
+is not configured; `/dev/outbox` is not mounted.
 
-When outbound email is configured, set these variables on the Railway
-service (values are secrets — never commit them):
+Preferred path: the Noctusoft relay (`POST /email/send`). The relay decides
+delivery from `X-App-Env` (`dev` captured, `uat` tagged, `production` delivered).
+Set these on the Railway service (the key is a secret — never commit it):
+
+| Variable | Purpose |
+| --- | --- |
+| `NOCTUSOFT_RELAY_BASE_URL` | Relay origin, `https://api.sendgrid.noctusoft.com` |
+| `NOCTUSOFT_API_KEY` | Relay key with the `email` scope |
+| `SMTP_FROM` or `EMAIL_FROM` | From address (default `noreply@ewurk.org`) |
+
+`RAILWAY_ENVIRONMENT_NAME` selects the relay environment. When the relay
+variables are set, they take precedence over raw SMTP.
+
+Direct SMTP still works when the relay is unset. Set these variables
+(values are secrets — never commit them):
 
 | Variable | Purpose |
 | --- | --- |
