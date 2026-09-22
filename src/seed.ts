@@ -1,6 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type { AppDeps } from './deps.js';
 import { buildDeps } from './server.js';
+import { addMonthsISO } from './domain/money.js';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
@@ -98,6 +99,9 @@ export function seed(deps: AppDeps, db: DatabaseSync): void {
 
   // 7. Swap: device3 replaces device4 for Herrera's lease.
   deps.leaseService.swap(herreraLease.id, devices[2]!.assetTag, 'seed');
+
+  // Herrera has no payments; backdate the lease so payment status reads "behind" (Q13 / QA).
+  db.prepare('UPDATE leases SET start_date = ? WHERE id = ?').run(addMonthsISO(today, -2), herreraLease.id);
 
   // 8. Record one payment on Osei's lease.
   deps.paymentService.recordPayment(oseiLease.id, 2000, today);
