@@ -61,13 +61,15 @@ outbox route (`/dev/outbox`) is only available when `NODE_ENV` is not
 
 ## Hosted environments (Railway)
 
-| Environment | URL | `NODE_ENV` |
-| --- | --- | --- |
-| dev | https://dev.ewurk.org | `development` |
-| uat | https://uat.ewurk.org | `development` |
-| production | https://ewurk.org and https://www.ewurk.org | `production` |
+| Environment | Git branch | URL | `NODE_ENV` |
+| --- | --- | --- | --- |
+| dev | `develop` | https://dev.ewurk.org | `development` |
+| uat | `uat` | https://uat.ewurk.org | `development` |
+| production | `main` | https://ewurk.org and https://www.ewurk.org | `production` |
 
-All three deploy from the `main` branch. The Railway service mounts a
+Branch tracking is defined in [`.railway/railway.ts`](.railway/railway.ts); apply
+changes with the Railway CLI (`railway config plan` / `railway config apply`)
+after merging IaC updates. The Railway service mounts a
 volume at `/data`; set `EWURK_DB_PATH=/data/ewurk.db` so the SQLite file
 persists across deploys. On first boot the database file is created and
 migrated automatically; visit `/` or `/login` to confirm the app is up.
@@ -120,6 +122,21 @@ service (values are secrets — never commit them):
 
 Also set `EWURK_PUBLIC_URL` to the public site origin (e.g.
 `https://ewurk.org`) so magic links in email point at the correct host.
+
+## Release promotion
+
+Hosted environments deploy from long-lived Git branches so a production merge
+does not update dev and uat at the same time:
+
+1. **Develop** — merge feature PRs into `develop`. Dev (https://dev.ewurk.org)
+   tracks `develop`.
+2. **UAT** — when ready for acceptance testing, open a PR **from `develop` into
+   `uat`**, merge after CI passes. UAT tracks `uat`.
+3. **Production** — when UAT is approved, open a PR **from `uat` into `main`**,
+   merge after CI passes. Production tracks `main`.
+
+Pull requests targeting `develop`, `uat`, or `main` run lint, typecheck, and
+unit tests in GitHub Actions (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ## Test
 
