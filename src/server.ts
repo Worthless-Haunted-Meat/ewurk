@@ -18,6 +18,7 @@ import { DeviceService } from './services/deviceService.js';
 import { LeaseService, PaymentService } from './services/leaseService.js';
 import { FamilyService } from './services/familyService.js';
 import { ClassService } from './services/classService.js';
+import { maybeSeedOnBoot } from './seedOnBoot.js';
 
 /**
  * Builds every real adapter/service against an already-open db handle.
@@ -78,7 +79,8 @@ export function buildDeps(): { deps: AppDeps; db: DatabaseSync } {
 }
 
 function main(): void {
-  const { deps } = buildDeps();
+  const { deps, db } = buildDeps();
+  maybeSeedOnBoot(deps, db);
   const app = createApp(deps);
   const port = Number(process.env.PORT ?? 3000);
   app.listen(port, () => {
