@@ -29,8 +29,8 @@ import { ClassService } from './services/classService.js';
 export function buildDepsFromDb(db: DatabaseSync): AppDeps {
   const clock = new SystemClock();
   const users = new SqliteUserStore(db);
-  const tokens = new SqliteTokenStore(db);
-  const sessions = new SqliteSessionStore(db);
+  const tokens = new SqliteTokenStore(db, clock);
+  const sessions = new SqliteSessionStore(db, clock);
   const { mailer } = createMailerFromEnv();
   const publicOrigin = process.env.EWURK_PUBLIC_URL?.trim() ?? 'http://localhost:3000';
   const donations = new SqliteDonationStore(db);

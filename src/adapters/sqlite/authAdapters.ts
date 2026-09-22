@@ -1,6 +1,8 @@
 import { DatabaseSync } from 'node:sqlite';
+import { SystemClock } from '../clock/SystemClock.js';
 import type { User } from '../../domain/types.js';
 import type { UserStore, TokenStore, SessionStore } from '../../ports/auth.js';
+import type { Clock } from '../../ports/clock.js';
 
 /**
  * Sqlite-backed UserStore.
@@ -38,7 +40,10 @@ export class SqliteUserStore implements UserStore {
  * Table: magic_links(id, user_id, token_hash UNIQUE, expires_at, used_at, created_at).
  */
 export class SqliteTokenStore implements TokenStore {
-  constructor(private db: DatabaseSync) {}
+  constructor(
+    private db: DatabaseSync,
+    private clock: Clock = new SystemClock(),
+  ) {}
 
   issue(userId: number, tokenHash: string, expiresAt: string): void {
     const now = new Date().toISOString();
@@ -64,8 +69,10 @@ export class SqliteTokenStore implements TokenStore {
       | undefined;
     if (!row) return null;
     if (row.used_at !== null) return null;
-    if (new Date(row.expires_at).getTime() < Date.now()) return null;
-    this.db.prepare('UPDATE magic_links SET used_at = ? WHERE id = ?').run(new Date().toISOString(), row.id);
+    if (new Date(row.expires_at).getTime() < this.clock.now().getTime()) return null;
+    this.db
+      .prepare('UPDATE magic_links SET used_at = ? WHERE id = ?')
+      .run(this.clock.now().toISOString(), row.id);
     return row.user_id;
   }
 }
@@ -75,7 +82,10 @@ export class SqliteTokenStore implements TokenStore {
  * Table: sessions(id TEXT PK, user_id, expires_at, created_at).
  */
 export class SqliteSessionStore implements SessionStore {
-  constructor(private db: DatabaseSync) {}
+  constructor(
+    private db: DatabaseSync,
+    private clock: Clock = new SystemClock(),
+  ) {}
 
   create(userId: number, expiresAt: string): string {
     const id = crypto.randomUUID();
@@ -96,7 +106,7 @@ export class SqliteSessionStore implements SessionStore {
       | { id: string; user_id: number; expires_at: string; created_at: string }
       | undefined;
     if (!row) return null;
-    if (new Date(row.expires_at).getTime() < Date.now()) return null;
+    if (new Date(row.expires_at).getTime() < this.clock.now().getTime()) return null;
     return { userId: row.user_id, expiresAt: row.expires_at };
   }
 
