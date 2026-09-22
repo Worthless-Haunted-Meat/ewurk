@@ -29,8 +29,8 @@ import { ClassService } from './services/classService.js';
 export function buildDepsFromDb(db: DatabaseSync): AppDeps {
   const clock = new SystemClock();
   const users = new SqliteUserStore(db);
-  const tokens = new SqliteTokenStore(db);
-  const sessions = new SqliteSessionStore(db);
+  const tokens = new SqliteTokenStore(db, clock);
+  const sessions = new SqliteSessionStore(db, clock);
   const mailer = new DevOutboxMailer();
   const donations = new SqliteDonationStore(db);
   const devices = new SqliteDeviceStore(db);
