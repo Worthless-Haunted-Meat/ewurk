@@ -11,7 +11,9 @@
   <main>
     <h1>EWURK</h1>
     <p>Electronic Waste Urban Renewal Kit</p>
-    <% if (sent) { %>
+    <% if (mailError) { %>
+      <div role="alert">Outbound email is not configured. Contact your administrator.</div>
+    <% } else if (sent) { %>
       <div role="status">Check the sign-in outbox for your link.</div>
     <% } %>
     <form method="post" action="/auth/magic-link">
