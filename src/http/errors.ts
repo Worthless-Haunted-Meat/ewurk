@@ -10,6 +10,7 @@ export type ErrorCode =
   | 'UNAUTHENTICATED'
   | 'FORBIDDEN'
   | 'INVALID_TOKEN'
+  | 'MAIL_NOT_CONFIGURED'
   | 'INTERNAL';
 
 const STATUS_BY_CODE: Record<ErrorCode, number> = {
@@ -24,6 +25,7 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   UNAUTHENTICATED: 401,
   FORBIDDEN: 403,
   INVALID_TOKEN: 401,
+  MAIL_NOT_CONFIGURED: 503,
   INTERNAL: 500,
 };
 
@@ -40,6 +42,7 @@ const DEFAULT_MESSAGE_BY_CODE: Record<ErrorCode, string> = {
   UNAUTHENTICATED: 'Sign in to continue.',
   FORBIDDEN: 'You are not authorized to do that.',
   INVALID_TOKEN: 'That sign-in link is invalid or has expired.',
+  MAIL_NOT_CONFIGURED: 'Outbound email is not configured. Contact your administrator.',
   INTERNAL: 'Something went wrong.',
 };
 

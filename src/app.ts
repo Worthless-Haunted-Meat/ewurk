@@ -22,13 +22,26 @@ export function createApp(deps: AppDeps): Express {
   app.use(express.static(path.join(__dirname, '..', 'public')));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  app.get('/health', (_req, res) => {
+    res.status(200).json({ status: 'ok' });
+  });
+
   app.use(sessionMiddleware(deps));
 
   app.get('/', (req, res) => {
-    res.render(req.user ? 'dashboard' : 'login', { user: req.user ?? null, sent: false });
+    res.render(req.user ? 'dashboard' : 'login', {
+      user: req.user ?? null,
+      sent: false,
+      mailError: false,
+    });
   });
   app.get('/login', (req, res) => {
-    res.render('login', { user: req.user ?? null, sent: req.query.sent === '1' });
+    res.render('login', {
+      user: req.user ?? null,
+      sent: req.query.sent === '1',
+      mailError: req.query.mail === 'unconfigured',
+    });
   });
 
   app.use('/auth', authWebRouter(deps));
@@ -36,10 +49,6 @@ export function createApp(deps: AppDeps): Express {
   if (deps.devOutboxEnabled) {
     app.get('/dev/outbox', (_req, res) => {
       res.json(deps.mailer.list());
-    });
-  } else {
-    app.get('/dev/outbox', (_req, res) => {
-      res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Not found.' } });
     });
   }
 

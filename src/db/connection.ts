@@ -1,5 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, statSync, unlinkSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { migrate } from './migrate.js';
 
@@ -14,6 +14,9 @@ export function openDb(filePath: string): DatabaseSync {
   if (filePath !== ':memory:') {
     const dir = path.dirname(filePath);
     if (dir && dir !== '.') mkdirSync(dir, { recursive: true });
+    if (existsSync(filePath) && statSync(filePath).size === 0) {
+      unlinkSync(filePath);
+    }
   }
   const db = new DatabaseSync(filePath);
   if (filePath !== ':memory:') db.exec('PRAGMA journal_mode = WAL');

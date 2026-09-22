@@ -21,6 +21,7 @@ export class AuthService implements AuthServicePort {
     private sessions: SessionStore,
     private mailer: Mailer,
     private clock: Clock,
+    private publicOrigin = 'http://localhost:3000',
   ) {}
 
   requestMagicLink(email: string): void {
@@ -33,7 +34,7 @@ export class AuthService implements AuthServicePort {
     this.mailer.send(
       email,
       'Your EWURK sign-in link',
-      `Sign in: http://localhost:3000/auth/verify?token=${rawToken}`,
+      `Sign in: ${this.publicOrigin.replace(/\/$/, '')}/auth/verify?token=${rawToken}`,
     );
   }
 

@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { realpathSync } from 'node:fs';
 import { SystemClock } from './adapters/clock/SystemClock.js';
 import { SqliteUserStore, SqliteTokenStore, SqliteSessionStore } from './adapters/sqlite/authAdapters.js';
-import { DevOutboxMailer } from './adapters/mail/DevOutboxMailer.js';
+import { createMailerFromEnv } from './adapters/mail/createMailer.js';
 import { SqliteDonationStore } from './adapters/sqlite/SqliteDonationStore.js';
 import { SqliteDeviceStore } from './adapters/sqlite/SqliteDeviceStore.js';
 import { SqliteLeaseStore, SqlitePaymentStore } from './adapters/sqlite/leasePaymentAdapters.js';
@@ -31,7 +31,8 @@ export function buildDepsFromDb(db: DatabaseSync): AppDeps {
   const users = new SqliteUserStore(db);
   const tokens = new SqliteTokenStore(db, clock);
   const sessions = new SqliteSessionStore(db, clock);
-  const mailer = new DevOutboxMailer();
+  const { mailer } = createMailerFromEnv();
+  const publicOrigin = process.env.EWURK_PUBLIC_URL?.trim() ?? 'http://localhost:3000';
   const donations = new SqliteDonationStore(db);
   const devices = new SqliteDeviceStore(db);
   const leases = new SqliteLeaseStore(db);
@@ -39,7 +40,7 @@ export function buildDepsFromDb(db: DatabaseSync): AppDeps {
   const families = new SqliteFamilyStore(db);
   const classes = new SqliteClassStore(db);
 
-  const authService = new AuthService(users, tokens, sessions, mailer, clock);
+  const authService = new AuthService(users, tokens, sessions, mailer, clock, publicOrigin);
   const donationService = new DonationService(donations, devices, clock);
   const deviceService = new DeviceService(devices, clock);
   const leaseService = new LeaseService(leases, deviceService, families, clock);

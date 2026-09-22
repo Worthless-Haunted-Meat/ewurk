@@ -56,7 +56,61 @@ curl -s localhost:3000/dev/outbox
 ```
 
 Open the link printed there in your browser to start a session. The
-outbox route (`/dev/outbox`) is disabled whenever `NODE_ENV=production`.
+outbox route (`/dev/outbox`) is only available when `NODE_ENV` is not
+`production`.
+
+## Hosted environments (Railway)
+
+| Environment | URL | `NODE_ENV` |
+| --- | --- | --- |
+| dev | https://dev.ewurk.org | `development` |
+| uat | https://uat.ewurk.org | `development` |
+| production | https://ewurk.org and https://www.ewurk.org | `production` |
+
+All three deploy from the `main` branch. The Railway service mounts a
+volume at `/data`; set `EWURK_DB_PATH=/data/ewurk.db` so the SQLite file
+persists across deploys. On first boot the database file is created and
+migrated automatically; visit `/` or `/login` to confirm the app is up.
+
+Railway (and other load balancers) can use `GET /health` — it returns
+`200` with `{"status":"ok"}` and does not require a session.
+
+### Seed on a hosted instance
+
+Run once per environment when you need demo or staff users (requires shell
+access or a one-off Railway command):
+
+```sh
+EWURK_DB_PATH=/data/ewurk.db npm run seed
+```
+
+Use the same `EWURK_DB_PATH` as the running service.
+
+### Sign-in on dev and uat
+
+`NODE_ENV=development`: magic links are written to the in-app dev outbox,
+not to real email. After requesting a link, open `GET /dev/outbox` (or
+use the same curl flow as local dev above) and follow the verify URL.
+
+### Sign-in on production
+
+`NODE_ENV=production` with no SMTP configuration: requesting a magic link
+for a known user shows an error that outbound email is not configured;
+`/dev/outbox` is not mounted.
+
+When outbound email is configured, set these variables on the Railway
+service (values are secrets — never commit them):
+
+| Variable | Purpose |
+| --- | --- |
+| `SMTP_HOST` | SMTP server hostname (when set, the app sends real mail) |
+| `SMTP_PORT` | Port (default `587`, STARTTLS) |
+| `SMTP_USER` | AUTH LOGIN username (optional if server allows) |
+| `SMTP_PASS` | AUTH LOGIN password |
+| `SMTP_FROM` | Envelope/from address for magic-link mail |
+
+Also set `EWURK_PUBLIC_URL` to the public site origin (e.g.
+`https://ewurk.org`) so magic links in email point at the correct host.
 
 ## Test
 
