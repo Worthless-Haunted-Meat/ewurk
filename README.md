@@ -72,13 +72,22 @@ volume at `/data`; set `EWURK_DB_PATH=/data/ewurk.db` so the SQLite file
 persists across deploys. On first boot the database file is created and
 migrated automatically; visit `/` or `/login` to confirm the app is up.
 
+On **dev** and **uat**, Railway sets `EWURK_SEED_ON_BOOT=true`. When
+`NODE_ENV` is not `production` and the database has no users yet (typical
+first boot on an empty volume), the server runs the same demo seed as
+`npm run seed` once at startup. The flag defaults to off locally; production
+**never** auto-seeds from this flag, even if it were set.
+
 Railway (and other load balancers) can use `GET /health` — it returns
 `200` with `{"status":"ok"}` and does not require a session.
 
 ### Seed on a hosted instance
 
-Run once per environment when you need demo or staff users (requires shell
-access or a one-off Railway command):
+**Dev / uat:** demo data is seeded automatically on first boot when the
+volume is empty (see `EWURK_SEED_ON_BOOT` above).
+
+**Production:** there is no auto-seed. Run manually when you need demo or
+staff users (shell access or a one-off Railway command):
 
 ```sh
 EWURK_DB_PATH=/data/ewurk.db npm run seed
