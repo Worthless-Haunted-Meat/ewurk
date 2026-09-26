@@ -7,6 +7,7 @@ export interface LeaseStore {
   listByFamily(familyId: number): Lease[];
   listAll(): Lease[];
   setHardshipPaused(id: number, paused: boolean): Lease;
+  markEnded(id: number): Lease;
   addCustody(leaseId: number, deviceId: number, startedAt: string): LeaseDevice;
   endCustody(leaseId: number, deviceId: number, endedAt: string): LeaseDevice;
   listCustody(leaseId: number): LeaseDevice[];

@@ -11,6 +11,9 @@ and `DESIGN.md` for how it's built.
 
 ## Install
 
+Requires Node **22.13 or newer** (`node:sqlite` needs no flag from 22.13;
+`.nvmrc` pins 22).
+
 ```sh
 npm ci
 npx playwright install chromium
@@ -55,9 +58,13 @@ curl -X POST localhost:3000/auth/magic-link -d '{"email":"staff@ewurk.org"}' -H 
 curl -s localhost:3000/dev/outbox
 ```
 
-Open the link printed there in your browser to start a session. The
-outbox route (`/dev/outbox`) is only available when `NODE_ENV` is not
-`production`.
+Open the link printed there in your browser to start a session.
+
+`/dev/outbox` shows every sign-in link the app has sent, so it is opt-in:
+it exists only when `EWURK_DEV_OUTBOX=true` **and** `NODE_ENV` is not
+`production`. `npm run dev` and the Playwright server set it; with
+`npm start`, run `EWURK_DEV_OUTBOX=true npm start`. Never set it on a
+publicly reachable host.
 
 ## Hosted environments (Railway)
 
@@ -88,29 +95,51 @@ Railway (and other load balancers) can use `GET /health` — it returns
 **Dev / uat:** demo data is seeded automatically on first boot when the
 volume is empty (see `EWURK_SEED_ON_BOOT` above).
 
-**Production:** there is no auto-seed. Run manually when you need demo or
-staff users (shell access or a one-off Railway command):
+**Production:** never run the demo seed — it creates fake families,
+leases, and payments. Create real accounts instead.
+
+### Create users
+
+v1 has no user-management screen. Add people from a shell on the running
+service (`railway ssh --service ewurk --environment production`), using the
+service's own database path:
 
 ```sh
-EWURK_DB_PATH=/data/ewurk.db npm run seed
+npm run user:add -- --email you@example.org --name "Your Name" --role staff
 ```
 
-Use the same `EWURK_DB_PATH` as the running service.
+`--role` is `staff` (default), `volunteer`, or `instructor`. Emails are
+stored lowercase, so sign-in is not case-sensitive. Locally, run
+`npm run build` first (the command runs from `dist/`).
 
 ### Sign-in on dev and uat
 
-`NODE_ENV=development`: magic links are written to the in-app dev outbox,
-not to real email. After requesting a link, open `GET /dev/outbox` (or
-use the same curl flow as local dev above) and follow the verify URL.
+The dev outbox is not available on hosted environments. Sign-in links go
+out through the Noctusoft relay (below), which captures `dev` mail and
+tags `uat` mail; an environment without relay or SMTP variables cannot
+send sign-in links.
 
 ### Sign-in on production
 
-`NODE_ENV=production` with no SMTP configuration: requesting a magic link
-for a known user shows an error that outbound email is not configured;
-`/dev/outbox` is not mounted.
+`NODE_ENV=production` with neither the Noctusoft relay nor SMTP configured:
+requesting a magic link for a known user shows an error that outbound email
+is not configured; `/dev/outbox` is not mounted.
 
-When outbound email is configured, set these variables on the Railway
-service (values are secrets — never commit them):
+Preferred path: the Noctusoft relay (`POST /email/send`). The relay decides
+delivery from `X-App-Env` (`dev` captured, `uat` tagged, `production` delivered).
+Set these on the Railway service (the key is a secret — never commit it):
+
+| Variable | Purpose |
+| --- | --- |
+| `NOCTUSOFT_RELAY_BASE_URL` | Relay origin, `https://api.sendgrid.noctusoft.com` |
+| `NOCTUSOFT_API_KEY` | Relay key with the `email` scope |
+| `SMTP_FROM` or `EMAIL_FROM` | From address (default `noreply@ewurk.org`) |
+
+`RAILWAY_ENVIRONMENT_NAME` selects the relay environment. When the relay
+variables are set, they take precedence over raw SMTP.
+
+Direct SMTP still works when the relay is unset. Set these variables
+(values are secrets — never commit them):
 
 | Variable | Purpose |
 | --- | --- |

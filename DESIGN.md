@@ -450,7 +450,7 @@ export const NEXT_STATUSES: Record<DeviceStatus, DeviceStatus[]> = {
   available: ['leased'],
   leased: ['returned', 'repair'],
   returned: ['triaged', 'retired'],
-  repair: ['refurbished', 'retired'],
+  repair: ['wiped', 'retired'],
   retired: [],
 };
 
@@ -468,11 +468,17 @@ export const WIPE_FIELDS = ['wipeMethod', 'wipeDate', 'wipeOperator'] as const;
 `DeviceService.transitionDevice` (implemented by T3) must, in order:
 1. Load the device; throw `NOT_FOUND` if missing.
 2. `if (!canTransition(device.status, to)) throw new AppError('INVALID_TRANSITION', ...)`.
+   2b. If `to === 'leased'` or the device is currently `leased`, the caller must
+   pass `{ viaLease: true }` (only `LeaseService` does), else `LEASE_MANAGED`.
+   Custody records and device status therefore always agree.
 3. `if (to === 'wiped')`: require `payload.wipeMethod && payload.wipeDate && payload.wipeOperator`,
    else throw `WIPE_FIELDS_REQUIRED`.
 4. `if (to === 'available')`: require the device's **current** `wipeMethod`,
    `wipeDate`, `wipeOperator` (persisted at step 3, on an earlier call) to
-   all be non-null, else throw `WIPE_REQUIRED`. This check is independent
+   all be non-null, and require that the device has not been `leased` since
+   its last `wiped` event, else throw `WIPE_REQUIRED`. A device that was
+   with a family is wiped again before the next one (`repair` leads to
+   `wiped`). This check is independent
    of step 2's sequencing — it runs even though only `imaged` devices can
    reach `available` today, so the gate still holds if the graph above is
    ever loosened later. Tests prove this directly by seeding a device row

@@ -17,6 +17,9 @@
          shown once, unambiguously, in the Custody chain section below
          (whose "... to present" row is always the current device). -->
     <p>Current device: <% if (currentDevice) { %><a href="/devices/<%= currentDevice.assetTag %>"><%= currentDevice.model %></a><% } else { %>none<% } %></p>
+    <% if (lease.status === 'ended') { %>
+      <p><strong>This lease has ended.</strong></p>
+    <% } %>
 
     <section aria-label="Swap device">
       <h2>Swap device</h2>
@@ -57,6 +60,16 @@
         <button type="submit"><%= lease.hardshipPaused ? 'Resume normal billing' : 'Pause for hardship' %></button>
       </form>
     </section>
+
+    <% if (lease.status === 'active') { %>
+    <section aria-label="End lease">
+      <h2>End lease</h2>
+      <p>Use this when the family returns the device. It goes back to "returned" and must be wiped before it is leased again.</p>
+      <form method="post" action="/leases/<%= lease.id %>/end">
+        <button type="submit">End lease — device returned</button>
+      </form>
+    </section>
+    <% } %>
 
     <section aria-label="Custody chain">
       <h2>Custody chain</h2>

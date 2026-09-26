@@ -69,6 +69,15 @@ export function leasesWebRouter(deps: AppDeps): Router {
   );
 
   router.post(
+    '/:id/end',
+    asyncHandler(async (req, res) => {
+      const id = Number(req.params.id);
+      deps.leaseService.endLease(id, actorName(req));
+      res.redirect(`/leases/${id}`);
+    }),
+  );
+
+  router.post(
     '/:id/payments',
     asyncHandler(async (req, res) => {
       const id = Number(req.params.id);
@@ -128,6 +137,14 @@ export function leasesApiRouter(deps: AppDeps): Router {
       const id = Number(req.params.id);
       const newAssetTag = String(req.body?.newAssetTag ?? '');
       const lease = deps.leaseService.swap(id, newAssetTag, actorName(req));
+      res.json(lease);
+    }),
+  );
+
+  router.post(
+    '/:id/end',
+    asyncHandler(async (req, res) => {
+      const lease = deps.leaseService.endLease(Number(req.params.id), actorName(req));
       res.json(lease);
     }),
   );

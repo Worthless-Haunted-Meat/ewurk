@@ -116,11 +116,7 @@ export class SqliteFamilyStore implements FamilyStore {
  *   session_id, WHERE family_id = ?, ORDER BY session_date.
  */
 export class SqliteClassStore implements ClassStore {
-  constructor(private db: DatabaseSync) {
-    // Disable foreign keys for compatibility with in-memory test fixtures
-    // that may insert related records before referenced records exist.
-    this.db.prepare('PRAGMA foreign_keys = OFF').run();
-  }
+  constructor(private db: DatabaseSync) {}
 
   createSession(input: { sessionDate: string; topic: string }): ClassSession {
     const now = new Date().toISOString().slice(0, 10);

@@ -1,16 +1,13 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type { AppDeps } from './deps.js';
 import { seed } from './seed.js';
+import { isEnvFlagOn } from './envFlag.js';
 
 export function isSeedOnBootEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
   if (env.NODE_ENV === 'production') {
     return false;
   }
-  const raw = env.EWURK_SEED_ON_BOOT?.trim().toLowerCase();
-  if (!raw || raw === '0' || raw === 'false' || raw === 'no') {
-    return false;
-  }
-  return true;
+  return isEnvFlagOn(env.EWURK_SEED_ON_BOOT);
 }
 
 export function isDatabaseEmpty(db: DatabaseSync): boolean {

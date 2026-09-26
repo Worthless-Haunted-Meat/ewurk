@@ -8,7 +8,9 @@ import { AppError } from '../errors.js';
 import { nextStatuses } from '../../domain/deviceLifecycle.js';
 
 function viewFlags(device: { status: DeviceStatus; wipeMethod: string | null; wipeDate: string | null; wipeOperator: string | null }) {
-  const allowedNext = nextStatuses(device.status);
+  // Moves into or out of `leased` belong to the lease page (start, swap,
+  // end), so the device page never offers them.
+  const allowedNext = device.status === 'leased' ? [] : nextStatuses(device.status).filter((s) => s !== 'leased');
   const hasWipe = !!device.wipeMethod && !!device.wipeDate && !!device.wipeOperator;
   return {
     allowedNext,

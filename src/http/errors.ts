@@ -5,6 +5,7 @@ export type ErrorCode =
   | 'WIPE_FIELDS_REQUIRED'
   | 'DUPLICATE_ACTIVE_LEASE'
   | 'DEVICE_NOT_AVAILABLE'
+  | 'LEASE_MANAGED'
   | 'NO_ITEMS'
   | 'VALIDATION'
   | 'UNAUTHENTICATED'
@@ -20,6 +21,7 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   WIPE_FIELDS_REQUIRED: 400,
   DUPLICATE_ACTIVE_LEASE: 409,
   DEVICE_NOT_AVAILABLE: 409,
+  LEASE_MANAGED: 409,
   NO_ITEMS: 422,
   VALIDATION: 400,
   UNAUTHENTICATED: 401,
@@ -37,6 +39,8 @@ const DEFAULT_MESSAGE_BY_CODE: Record<ErrorCode, string> = {
   WIPE_FIELDS_REQUIRED: 'Wipe method, date, and operator are all required to record a wipe.',
   DUPLICATE_ACTIVE_LEASE: 'This family already has an active lease.',
   DEVICE_NOT_AVAILABLE: 'That device is not available to lease.',
+  LEASE_MANAGED:
+    'A device moves into or out of "leased" only from its lease: start, swap, or end the lease instead.',
   NO_ITEMS: 'This donation has no received items yet.',
   VALIDATION: 'Missing or invalid input.',
   UNAUTHENTICATED: 'Sign in to continue.',

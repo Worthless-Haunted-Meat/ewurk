@@ -24,7 +24,10 @@ export class AuthService implements AuthServicePort {
     private publicOrigin = 'http://localhost:3000',
   ) {}
 
-  requestMagicLink(email: string): void {
+  requestMagicLink(rawEmail: string): void {
+    // Emails are stored lowercase (see src/cli/addUser.ts), so "Ricky@…"
+    // and "ricky@…" reach the same account.
+    const email = rawEmail.trim().toLowerCase();
     const user = this.users.findByEmail(email);
     if (!user) return;
     const rawToken = randomBytes(32).toString('hex');
