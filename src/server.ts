@@ -2,9 +2,8 @@ import type { DatabaseSync } from 'node:sqlite';
 import { openDb } from './db/connection.js';
 import { createApp } from './app.js';
 import type { AppDeps } from './deps.js';
-import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
-import { realpathSync } from 'node:fs';
+import { isEntryPoint } from './entryPoint.js';
+import { isEnvFlagOn } from './envFlag.js';
 import { SystemClock } from './adapters/clock/SystemClock.js';
 import { SqliteUserStore, SqliteTokenStore, SqliteSessionStore } from './adapters/sqlite/authAdapters.js';
 import { createMailerFromEnv } from './adapters/mail/createMailer.js';
@@ -68,8 +67,17 @@ export function buildDepsFromDb(db: DatabaseSync): AppDeps {
     paymentService,
     familyService,
     classService,
-    devOutboxEnabled: process.env.NODE_ENV !== 'production',
+    devOutboxEnabled: isDevOutboxEnabled(),
   };
+}
+
+/**
+ * `/dev/outbox` shows every sign-in link the app has sent, so it is opt-in:
+ * only when `EWURK_DEV_OUTBOX` is on, and never in production. A hosted
+ * dev/uat server running with NODE_ENV=development does not expose it.
+ */
+export function isDevOutboxEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.NODE_ENV !== 'production' && isEnvFlagOn(env.EWURK_DEV_OUTBOX);
 }
 
 export function buildDeps(): { deps: AppDeps; db: DatabaseSync } {
@@ -89,27 +97,9 @@ function main(): void {
   });
 }
 
-// Only start the server when this file is the CLI entry point (so that
+// Only start the server when this file is the CLI entry point, so that
 // `import { buildDeps } from './server.js'` in src/seed.ts / tests never
-// triggers a real HTTP listener as a side effect). `resolve()` alone is
-// not enough here: it normalizes a path string but does not resolve
-// symlinks, so on a checkout under a symlinked temp dir (e.g. macOS's
-// /tmp -> /private/tmp, /var -> /private/var) `process.argv[1]` and
-// `import.meta.url` can each be reported through a different symlink
-// alias for the *same* file, making a strict string comparison fail —
-// which would silently skip `main()` and leave the process listening on
-// nothing, exactly the "process starts, never answers" failure mode this
-// guard must not produce. Resolve both sides to their real path before
-// comparing, and if that check can't be completed for any reason, fail
-// open (start the server) rather than fail closed (silently don't).
-if (process.argv[1]) {
-  try {
-    const invoked = realpathSync(resolve(process.argv[1]));
-    const thisFile = realpathSync(fileURLToPath(import.meta.url));
-    if (invoked === thisFile) {
-      main();
-    }
-  } catch {
-    main();
-  }
+// starts a real HTTP listener as a side effect.
+if (isEntryPoint(import.meta.url)) {
+  main();
 }

@@ -6,22 +6,23 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "engines": {
-    "node": ">=22.5.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "EWURK_DEV_OUTBOX=true tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json && node -e \"require('fs').mkdirSync('dist/db',{recursive:true});require('fs').copyFileSync('src/db/schema.sql','dist/db/schema.sql')\"",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "seed": "tsx src/seed.ts",
+    "user:add": "node dist/cli/addUser.js",
     "test:unit": "node --import tsx --test test/*.test.ts",
     "test:e2e": "playwright test",
     "test": "npm run test:unit && npm run test:e2e",
     "test:e2e:reset": "node -e \"try{require('fs').unlinkSync('data/test.db')}catch(e){}\"",
     "test:e2e:seed": "EWURK_DB_PATH=data/test.db tsx src/seed.ts",
-    "test:e2e:serve": "EWURK_DB_PATH=data/test.db PORT=4310 node dist/server.js"
+    "test:e2e:serve": "EWURK_DEV_OUTBOX=true EWURK_DB_PATH=data/test.db PORT=4310 node dist/server.js"
   },
   "dependencies": {
     "ejs": "^3.1.10",
