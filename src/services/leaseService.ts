@@ -6,6 +6,14 @@ import type { Clock } from '../ports/clock.js';
 import { AppError } from '../http/errors.js';
 import { addMonthsISO, monthsCovered } from '../domain/money.js';
 
+const VIA_LEASE = { viaLease: true } as const;
+
+function isRealISODate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
 /**
  * Service layer for lease CRUD, swap, and custody chain.
  *
@@ -20,16 +28,27 @@ import { addMonthsISO, monthsCovered } from '../domain/money.js';
  *   Return the lease.
  *
  * swap(leaseId, newAssetTag, actor):
- *   1. leases.getById(leaseId) — NOT_FOUND if missing.
+ *   1. leases.getById(leaseId) — NOT_FOUND if missing; VALIDATION if ended.
  *   2. deviceLifecycle.getByAssetTag(newAssetTag) — NOT_FOUND if missing.
  *   3. leases.getCurrentDeviceId(leaseId) — the outgoing device.
- *   4. deviceLifecycle.transitionDevice(newDevice.id, 'leased', actor),
- *      catching INVALID_TRANSITION -> DEVICE_NOT_AVAILABLE.
+ *   Every precondition is checked before the first write, so a refused swap
+ *   changes nothing: the incoming device must be available and distinct
+ *   (DEVICE_NOT_AVAILABLE), the outgoing device must be leased.
+ *   4. deviceLifecycle.transitionDevice(newDevice.id, 'leased', actor).
  *   5. deviceLifecycle.transitionDevice(outgoingDeviceId, 'repair', actor).
  *   6. leases.endCustody(leaseId, outgoingDeviceId, clock.todayISO()).
  *   7. leases.addCustody(leaseId, newDevice.id, clock.todayISO()).
  *   8. deviceLifecycle.setReplacesLink(newDevice.id, outgoingDeviceId).
  *   Return the lease unchanged.
+ *
+ * endLease(leaseId, actor):
+ *   1. leases.getById(leaseId) — NOT_FOUND if missing; VALIDATION if ended.
+ *   2. If the lease holds a device: transition it to 'returned' and end its
+ *      custody row.
+ *   3. leases.markEnded(leaseId).
+ *
+ * Every device transition here passes { viaLease: true }: LeaseService is
+ * the only caller allowed to move a device into or out of 'leased'.
  *
  * getCustodyChain(leaseId):
  *   leases.listCustody(leaseId), map each row to include assetTag
@@ -61,7 +80,7 @@ export class LeaseService {
     if (existing) throw new AppError('DUPLICATE_ACTIVE_LEASE');
 
     try {
-      this.deviceLifecycle.transitionDevice(device.id, 'leased', actor);
+      this.deviceLifecycle.transitionDevice(device.id, 'leased', actor, undefined, VIA_LEASE);
     } catch (err) {
       if (err instanceof AppError && err.code === 'INVALID_TRANSITION') {
         throw new AppError('DEVICE_NOT_AVAILABLE');
@@ -75,29 +94,43 @@ export class LeaseService {
   }
 
   swap(leaseId: number, newAssetTag: string, actor: string): Lease {
-    const lease = this.leases.getById(leaseId);
-    if (!lease) throw new AppError('NOT_FOUND');
+    const lease = this.activeLease(leaseId);
 
     const newDevice = this.deviceLifecycle.getByAssetTag(newAssetTag);
     if (!newDevice) throw new AppError('NOT_FOUND');
 
     const outgoingDeviceId = this.leases.getCurrentDeviceId(leaseId);
     if (outgoingDeviceId === null) throw new AppError('NOT_FOUND');
-
-    try {
-      this.deviceLifecycle.transitionDevice(newDevice.id, 'leased', actor);
-    } catch (err) {
-      if (err instanceof AppError && err.code === 'INVALID_TRANSITION') {
-        throw new AppError('DEVICE_NOT_AVAILABLE');
-      }
-      throw err;
+    if (newDevice.status !== 'available' || newDevice.id === outgoingDeviceId) {
+      throw new AppError('DEVICE_NOT_AVAILABLE');
+    }
+    if (this.deviceLifecycle.getById(outgoingDeviceId)?.status !== 'leased') {
+      throw new AppError('INVALID_TRANSITION');
     }
 
-    this.deviceLifecycle.transitionDevice(outgoingDeviceId, 'repair', actor);
+    this.deviceLifecycle.transitionDevice(newDevice.id, 'leased', actor, undefined, VIA_LEASE);
+    this.deviceLifecycle.transitionDevice(outgoingDeviceId, 'repair', actor, undefined, VIA_LEASE);
     this.leases.endCustody(leaseId, outgoingDeviceId, this.clock.todayISO());
     this.leases.addCustody(leaseId, newDevice.id, this.clock.todayISO());
     this.deviceLifecycle.setReplacesLink(newDevice.id, outgoingDeviceId);
 
+    return lease;
+  }
+
+  endLease(leaseId: number, actor: string): Lease {
+    this.activeLease(leaseId);
+    const deviceId = this.leases.getCurrentDeviceId(leaseId);
+    if (deviceId !== null) {
+      this.deviceLifecycle.transitionDevice(deviceId, 'returned', actor, undefined, VIA_LEASE);
+      this.leases.endCustody(leaseId, deviceId, this.clock.todayISO());
+    }
+    return this.leases.markEnded(leaseId);
+  }
+
+  private activeLease(leaseId: number): Lease {
+    const lease = this.leases.getById(leaseId);
+    if (!lease) throw new AppError('NOT_FOUND');
+    if (lease.status !== 'active') throw new AppError('VALIDATION', 'This lease has ended.');
     return lease;
   }
 
@@ -134,7 +167,8 @@ export interface PaymentStatusResult {
  *
  * recordPayment(leaseId, amountCents, paidDate):
  *   1. leases.getById(leaseId) — NOT_FOUND if missing.
- *   2. If amountCents <= 0 throw VALIDATION with 'Payment amount must be greater than zero.'.
+ *   2. amountCents must be a positive whole number and paidDate a real
+ *      YYYY-MM-DD date, else VALIDATION.
  *   3. payments.record({leaseId, amountCents, paidDate}).
  *   Return the payment.
  *
@@ -163,8 +197,11 @@ export class PaymentService {
     const lease = this.leases.getById(leaseId);
     if (!lease) throw new AppError('NOT_FOUND');
 
-    if (amountCents <= 0) {
-      throw new AppError('VALIDATION', 'Payment amount must be greater than zero.');
+    if (!Number.isInteger(amountCents) || amountCents <= 0) {
+      throw new AppError('VALIDATION', 'Payment amount must be greater than zero, in whole cents.');
+    }
+    if (!isRealISODate(paidDate)) {
+      throw new AppError('VALIDATION', 'Payment date must be a real date (YYYY-MM-DD).');
     }
 
     return this.payments.record({ leaseId, amountCents, paidDate });

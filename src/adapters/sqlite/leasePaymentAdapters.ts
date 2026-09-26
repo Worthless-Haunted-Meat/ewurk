@@ -46,11 +46,7 @@ type PaymentRow = {
  *   lease_id = ? AND ended_at IS NULL LIMIT 1; null if none.
  */
 export class SqliteLeaseStore implements LeaseStore {
-  constructor(private db: DatabaseSync) {
-    // Disable foreign keys for compatibility with in-memory test fixtures
-    // that may insert related records before referenced records exist.
-    this.db.prepare('PRAGMA foreign_keys = OFF').run();
-  }
+  constructor(private db: DatabaseSync) {}
 
   create(input: { familyId: number; startDate: string }): Lease {
     const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -134,6 +130,11 @@ export class SqliteLeaseStore implements LeaseStore {
     this.db
       .prepare('UPDATE leases SET hardship_paused = ? WHERE id = ?')
       .run(paused ? 1 : 0, id);
+    return this.getById(id)!;
+  }
+
+  markEnded(id: number): Lease {
+    this.db.prepare("UPDATE leases SET status = 'ended' WHERE id = ?").run(id);
     return this.getById(id)!;
   }
 

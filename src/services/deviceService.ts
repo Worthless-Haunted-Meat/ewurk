@@ -1,12 +1,13 @@
 import type { Device, DeviceEvent, DeviceStatus } from '../domain/types.js';
-import type { DeviceStore, DeviceLifecyclePort, WipeInput } from '../ports/device.js';
+import type { DeviceStore, DeviceLifecyclePort, TransitionOptions, WipeInput } from '../ports/device.js';
 import type { Clock } from '../ports/clock.js';
 import { AppError } from '../http/errors.js';
 import { canTransition } from '../domain/deviceLifecycle.js';
 
 /**
  * Implements the one guarded device‑lifecycle entry point described in
- * DESIGN.md §4: NOT_FOUND → INVALID_TRANSITION → WIPE_FIELDS_REQUIRED
+ * DESIGN.md §4: NOT_FOUND → INVALID_TRANSITION → LEASE_MANAGED (into or
+ * out of leased, unless LeaseService is the caller) → WIPE_FIELDS_REQUIRED
  * (into wiped) → WIPE_REQUIRED (into available, runs every time) →
  * persist transition + event.
  */
@@ -29,6 +30,7 @@ export class DeviceService implements DeviceLifecyclePort {
     to: DeviceStatus,
     actor: string,
     payload?: Partial<WipeInput>,
+    options?: TransitionOptions,
   ): Device {
     // 1. NOT_FOUND
     const device = this.devices.getById(deviceId);
@@ -37,6 +39,12 @@ export class DeviceService implements DeviceLifecyclePort {
     // 2. INVALID_TRANSITION
     if (!canTransition(device.status, to)) {
       throw new AppError('INVALID_TRANSITION');
+    }
+
+    // 2b. LEASE_MANAGED — only LeaseService moves a device into or out of
+    //     `leased`, so a lease's custody record always matches the device.
+    if ((to === 'leased' || device.status === 'leased') && !options?.viaLease) {
+      throw new AppError('LEASE_MANAGED');
     }
 
     // 3. WIPE_FIELDS_REQUIRED — entering wiped
@@ -49,8 +57,11 @@ export class DeviceService implements DeviceLifecyclePort {
     // 4. WIPE_REQUIRED — entering available (runs every time, regardless of
     //    current status — catches data‑integrity edges where a device
     //    somehow reaches imaged/available without a wipe record).
+    //    A wipe recorded before the device's last lease no longer counts:
+    //    the device must be wiped again after it comes back from a family.
     if (to === 'available') {
-      if (!device.wipeMethod || !device.wipeDate || !device.wipeOperator) {
+      const hasWipe = !!device.wipeMethod && !!device.wipeDate && !!device.wipeOperator;
+      if (!hasWipe || this.leasedSinceLastWipe(deviceId)) {
         throw new AppError('WIPE_REQUIRED');
       }
     }
@@ -63,6 +74,11 @@ export class DeviceService implements DeviceLifecyclePort {
     this.devices.appendEvent(deviceId, to, actor);
 
     return updated;
+  }
+
+  private leasedSinceLastWipe(deviceId: number): boolean {
+    const types = this.devices.listEvents(deviceId).map((e) => e.eventType);
+    return types.lastIndexOf('leased') > types.lastIndexOf('wiped');
   }
 
   getTimeline(deviceId: number): { device: Device; events: DeviceEvent[] } {

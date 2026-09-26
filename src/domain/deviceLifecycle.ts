@@ -6,6 +6,9 @@ import type { DeviceStatus } from './types.js';
  * imaged -> available), and DeviceService.transitionDevice additionally
  * re-checks the wipe fields directly on the transition into `available`
  * (see DESIGN.md §4) so the gate holds even if this graph changes later.
+ *
+ * `repair` leads back through `wiped`: a device that was with a family is
+ * wiped again before it can be leased to the next one.
  */
 export const NEXT_STATUSES: Record<DeviceStatus, DeviceStatus[]> = {
   received: ['triaged'],
@@ -16,7 +19,7 @@ export const NEXT_STATUSES: Record<DeviceStatus, DeviceStatus[]> = {
   available: ['leased'],
   leased: ['returned', 'repair'],
   returned: ['triaged', 'retired'],
-  repair: ['refurbished', 'retired'],
+  repair: ['wiped', 'retired'],
   retired: [],
 };
 

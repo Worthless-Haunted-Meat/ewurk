@@ -244,6 +244,12 @@ export class FakeLeaseStore implements LeaseStore {
     row.hardshipPaused = paused;
     return row;
   }
+  markEnded(id: number): Lease {
+    const row = this.rows.find((l) => l.id === id);
+    if (!row) throw new Error('not found');
+    row.status = 'ended';
+    return row;
+  }
   addCustody(leaseId: number, deviceId: number, startedAt: string): LeaseDevice {
     const row: LeaseDevice = { id: this.nextCustodyId++, leaseId, deviceId, startedAt, endedAt: null };
     this.custody.push(row);
