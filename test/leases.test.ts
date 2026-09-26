@@ -201,6 +201,14 @@ describe('[R9][R10][R11][R12][R13][R14] sqlite lease/payment adapters (real, :me
     db = openDb(':memory:');
     db.prepare("INSERT INTO families (name, contact, neighborhood, created_at) VALUES ('Herrera Family', '555-0100', NULL, datetime('now'))").run();
     familyId = 1;
+    // Real rows for the custody test's device ids 1 and 2: foreign keys are
+    // enforced on every connection, so custody cannot point at a missing device.
+    db.prepare("INSERT INTO donations (donor_org, pickup_date, created_at) VALUES ('St. Anne''s Parish', '2026-01-01', datetime('now'))").run();
+    const insertDevice = db.prepare(
+      "INSERT INTO devices (asset_tag, donation_id, model, serial, created_at) VALUES (?, 1, 'Latitude 5400', ?, datetime('now'))",
+    );
+    insertDevice.run('EW-0001', 'SN-FK-1');
+    insertDevice.run('EW-0002', 'SN-FK-2');
   });
 
   test('[R9] LeaseStore create / getById / findActiveByFamily / listAll', () => {
