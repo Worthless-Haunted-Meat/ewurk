@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { AppDeps } from './deps.js';
 import { errorEnvelope } from './http/errors.js';
+import { healthBody } from './health.js';
 import { sessionMiddleware } from './http/middleware/session.js';
 import { authWebRouter } from './http/routes/auth.js';
 import { donationsWebRouter, donationsApiRouter } from './http/routes/donations.js';
@@ -24,7 +25,7 @@ export function createApp(deps: AppDeps): Express {
   app.use(express.urlencoded({ extended: true }));
 
   app.get('/health', (_req, res) => {
-    res.status(200).json({ status: 'ok' });
+    res.status(200).json(healthBody());
   });
 
   app.use(sessionMiddleware(deps));
