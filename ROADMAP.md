@@ -117,7 +117,7 @@ Notes:
 
 ## M7: Polish and release readiness
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: README complete, edge cases handled, fresh-clone verification documented for maintainers.
 
