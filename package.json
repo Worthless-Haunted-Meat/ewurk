@@ -5,20 +5,27 @@
   "description": "EWURK - Electronic Waste Urban Renewal Kit: donation intake, device lifecycle, leases, payments, and class attendance for a refurbished-laptop lease program.",
   "license": "GPL-3.0-or-later",
   "type": "module",
+  "workspaces": [
+    "ewurk-linux-image"
+  ],
   "engines": {
     "node": ">=22.5.0"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json && node -e \"require('fs').mkdirSync('dist/db',{recursive:true});require('fs').copyFileSync('src/db/schema.sql','dist/db/schema.sql')\"",
+    "dev": "npm run dev -w ewurk-linux-image",
+    "dev:ops": "tsx watch src/server.ts",
+    "build": "npm run build -w ewurk-linux-image",
+    "build:ops": "tsc -p tsconfig.json && node -e \"require('fs').mkdirSync('dist/db',{recursive:true});require('fs').copyFileSync('src/db/schema.sql','dist/db/schema.sql')\"",
     "start": "node dist/server.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
+    "start:linux-image": "npm run start -w ewurk-linux-image",
+    "lint": "eslint . && npm run lint -w ewurk-linux-image",
+    "lint:fix": "eslint . --fix && npm run lint:fix -w ewurk-linux-image",
+    "typecheck": "tsc --noEmit && npm run typecheck -w ewurk-linux-image",
     "seed": "tsx src/seed.ts",
     "test:unit": "node --import tsx --test test/*.test.ts",
     "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "npm run test -w ewurk-linux-image",
+    "test:all": "npm run test:unit && npm run test:e2e",
     "test:e2e:reset": "node -e \"try{require('fs').unlinkSync('data/test.db')}catch(e){}\"",
     "test:e2e:seed": "EWURK_DB_PATH=data/test.db tsx src/seed.ts",
     "test:e2e:serve": "EWURK_DB_PATH=data/test.db PORT=4310 node dist/server.js"

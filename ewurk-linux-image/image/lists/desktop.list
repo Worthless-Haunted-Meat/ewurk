@@ -1,0 +1,10 @@
+# EWURK bookworm amd64 XFCE desktop selection (validated against image/manifest.json).
+xfce4
+xfce4-terminal
+thunar
+firefox-esr
+libreoffice-writer
+network-manager
+cups
+firmware-linux-nonfree
+firmware-realtek

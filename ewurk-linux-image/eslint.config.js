@@ -6,16 +6,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: [
-      'dist/**',
-      'ewurk-linux-image/dist/**',
-      'node_modules/**',
-      'coverage/**',
-      'playwright-report/**',
-      'test-results/**',
-      'data/**',
-      '.railway/**',
-    ],
+    ignores: ['dist/**', 'node_modules/**'],
   },
   {
     files: ['**/*.ts'],

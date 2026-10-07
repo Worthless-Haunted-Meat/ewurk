@@ -1,0 +1,12 @@
+#!/bin/bash
+# Copy EWURK rootfs overlay into the live-build chroot.
+set -euo pipefail
+
+OVERLAY="$(dirname "${LB_CONFIG:?}")/overlay"
+if [[ ! -d "${OVERLAY}" ]]; then
+	echo "Missing overlay directory: ${OVERLAY}" >&2
+	exit 1
+fi
+
+cp -a "${OVERLAY}/." "${TARGET_ROOT:?}/"
+chmod 0755 "${TARGET_ROOT}/usr/lib/ewurk/firstboot.sh"

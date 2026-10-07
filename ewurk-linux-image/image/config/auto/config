@@ -1,0 +1,27 @@
+#!/bin/sh
+# EWURK live-build configuration (Debian bookworm amd64, XFCE live image).
+set -e
+
+lb config noauto \
+	--config "$(dirname "$0")/.." \
+	"${@}" \
+	--mode debian \
+	--distribution bookworm \
+	--archive-areas "main contrib non-free non-free-firmware" \
+	--architectures amd64 \
+	--linux-flavors amd64 \
+	--bootappend-live "boot=live components quiet splash" \
+	--debian-installer false \
+	--iso-application "EWURK Linux" \
+	--iso-preparer "Worthless Haunted Meat" \
+	--iso-publisher "Worthless Haunted Meat" \
+	--iso-volume "EWURK Live" \
+	--memtest none \
+	--win32-loader false \
+	--apt-indices false \
+	--apt-recommends true \
+	--security true \
+	--updates true \
+	--backports false
+
+exit 0

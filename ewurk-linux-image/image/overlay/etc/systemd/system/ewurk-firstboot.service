@@ -1,0 +1,19 @@
+[Unit]
+Description=EWURK first-boot setup (locale, keyboard, family user)
+Documentation=file:/usr/share/doc/ewurk-firstboot/README
+ConditionPathExists=!/var/lib/ewurk-firstboot/done
+After=local-fs.target
+Before=display-manager.service
+Conflicts=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/ewurk/firstboot.sh
+RemainAfterExit=yes
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+TTYPath=/dev/tty1
+
+[Install]
+WantedBy=multi-user.target

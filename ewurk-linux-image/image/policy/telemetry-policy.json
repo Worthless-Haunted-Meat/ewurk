@@ -1,0 +1,12 @@
+{
+  "forbiddenServices": [
+    "apport.service",
+    "snapd.service",
+    "ubuntu-advantage.service",
+    "whoopsie.service"
+  ],
+  "forbiddenPaths": [
+    "/etc/cron.daily/popularity-contest",
+    "/etc/update-motd.d/91-release-upgrade"
+  ]
+}
