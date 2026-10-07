@@ -1,0 +1,15 @@
+# EWURK desktop packages (kept in sync with ../lists/desktop.list).
+task-xfce-desktop
+xfce4
+xfce4-terminal
+thunar
+firefox-esr
+libreoffice-writer
+network-manager
+cups
+firmware-linux-nonfree
+firmware-realtek
+dialog
+locales
+keyboard-configuration
+sudo

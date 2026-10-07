@@ -1,0 +1,8 @@
+EWURK first-boot setup
+========================
+
+Runs once on a new installation via systemd unit `ewurk-firstboot.service`.
+The flow is intentionally offline: it uses local `dialog` prompts only and
+does not create cloud, OEM, or vendor portal accounts.
+
+Completion marker: `/var/lib/ewurk-firstboot/done`

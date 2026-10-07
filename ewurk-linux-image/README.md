@@ -46,6 +46,29 @@ npm run build
 Compiles TypeScript and validates `image/manifest.json` against
 `image/lists/desktop.list` (required, forbidden, and firmware packages).
 
+## Host packages (image build)
+
+Building the ISO (M4+) requires live-build on a Debian or Ubuntu amd64 host.
+List packages:
+
+```sh
+./scripts/host-deps.sh
+```
+
+Install them:
+
+```sh
+sudo ./scripts/host-deps.sh --install
+```
+
+## live-build config and first-boot overlay
+
+- `image/config/` — live-build tree (`lb build` runs here in M4). Entry point:
+  `image/config/auto/config` (bookworm, amd64, XFCE packages).
+- `image/overlay/` — files copied into the rootfs, including
+  `ewurk-firstboot.service` and `/usr/lib/ewurk/firstboot.sh` (offline
+  locale/keyboard/hostname/user prompts; no cloud sign-in).
+
 ## Image manifest
 
 Recipe metadata lives in `image/manifest.json`. Package selections for the

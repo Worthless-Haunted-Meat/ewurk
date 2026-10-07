@@ -1,0 +1,14 @@
+#!/bin/bash
+# Enable EWURK first-boot oneshot inside the built image (no cloud enrollment).
+set -euo pipefail
+
+UNIT=/etc/systemd/system/ewurk-firstboot.service
+WANTS=/etc/systemd/system/multi-user.target.wants/ewurk-firstboot.service
+
+if [[ ! -f "${UNIT}" ]]; then
+	echo "Missing ${UNIT} (overlay not applied?)" >&2
+	exit 1
+fi
+
+mkdir -p "$(dirname "${WANTS}")"
+ln -sf "${UNIT}" "${WANTS}"

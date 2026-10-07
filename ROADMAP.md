@@ -41,20 +41,21 @@ Notes:
 
 ## M3: live-build config and rootfs overlay
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Add Debian live-build configuration and overlay files including first-boot systemd unit and scripts (locale, keyboard, single user).
 
 Acceptance:
 
-- [ ] `image/config/` contains a complete `lb config` tree for bookworm amd64 XFCE
-- [ ] `image/overlay/` contains `ewurk-firstboot.service` and installer script with documented offline behavior
-- [ ] `npm test` asserts required paths exist (overlay unit, service enabled via `chroot_local-hooks` or equivalent hook file)
-- [ ] `README.md` lists host packages from `scripts/host-deps.sh` (or equivalent) with install command
+- [x] `image/config/` contains a complete `lb config` tree for bookworm amd64 XFCE
+- [x] `image/overlay/` contains `ewurk-firstboot.service` and installer script with documented offline behavior
+- [x] `npm test` asserts required paths exist (overlay unit, service enabled via `chroot_local-hooks` or equivalent hook file)
+- [x] `README.md` lists host packages from `scripts/host-deps.sh` (or equivalent) with install command
 
 Notes:
 
 - First-boot must not prompt for cloud or OEM accounts; only locale/keyboard/hostname (optional)/username.
+- Overlay is applied via `hooks/normal/0100-ewurk-overlay.chroot`; enablement uses `chroot_local-hooks/0100-enable-ewurk-firstboot`.
 
 ## M4: Produce bootable ISO artifact
 
