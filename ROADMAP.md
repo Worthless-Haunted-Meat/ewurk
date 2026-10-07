@@ -5,16 +5,17 @@ exists. Milestones do not modify EWURK ops payment or lease code under the
 repository root `src/`.
 
 ## M1: Walking skeleton
-Status: [~] in progress
+Status: [x] done
 Goal: Scaffold the isolated package with lint, typecheck, test, build, and a trivial HTTP 200 on `GET /`.
 Acceptance:
-- [ ] `ewurk-lease-economics/package.json` exists with scripts `dev`, `build`, `start`, `test`, `lint`, `typecheck`
-- [ ] `cd ewurk-lease-economics && npm ci && npm test` passes with at least one real test (e.g. smoke `GET /`)
-- [ ] `cd ewurk-lease-economics && npm run dev` starts; `curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/` returns `200` (document default `PORT` in README)
-- [ ] `ewurk-lease-economics/README.md` documents clone path, `cd ewurk-lease-economics`, and install/run commands
+- [x] `ewurk-lease-economics/package.json` exists with scripts `dev`, `build`, `start`, `test`, `lint`, `typecheck`
+- [x] `cd ewurk-lease-economics && npm ci && npm test` passes with at least one real test (e.g. smoke `GET /`)
+- [x] `cd ewurk-lease-economics && npm run dev` starts; `curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/` returns `200` (document default `PORT` in README)
+- [x] `ewurk-lease-economics/README.md` documents clone path, `cd ewurk-lease-economics`, and install/run commands
 Notes:
 - Use GPL-3.0 `LICENSE` in `ewurk-lease-economics/`.
 - Default port should not collide with root EWURK (3000); use 3001 or `PORT`.
+- Root `eslint.config.js` ignores `ewurk-lease-economics/**`; lint runs inside the subpackage only.
 
 ## M2: Integer cents domain model
 Status: [ ] todo
