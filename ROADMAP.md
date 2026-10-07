@@ -40,14 +40,15 @@ Notes:
 - Blank template row after `example` is skipped by the parser.
 
 ## M4: CLI recovery table
-Status: [~] in progress
+Status: [x] done
 Goal: Operators run one command to print months-to-recover from a CSV file.
 Acceptance:
-- [ ] `cd ewurk-lease-economics && npm run build && node dist/cli.js fixtures/shop-fixture.csv` exits 0 and prints `months_to_recover` and `cost_cents_per_available`
-- [ ] `cd ewurk-lease-economics && npm test` includes a CLI integration test or snapshot of stdout for the fixture file
-- [ ] Output includes the fixed policy sentence that non-payment is not lockout
+- [x] `cd ewurk-lease-economics && npm run build && node dist/cli.js fixtures/shop-fixture.csv` exits 0 and prints `months_to_recover` and `cost_cents_per_available`
+- [x] `cd ewurk-lease-economics && npm test` includes a CLI integration test or snapshot of stdout for the fixture file
+- [x] Output includes the fixed policy sentence that non-payment is not lockout
 Notes:
 - `npm run calculate` script wraps the CLI entry.
+- `npm test` runs `build` first so `dist/cli.js` exists for the spawn test.
 
 ## M5: Swap/repair and yield scenarios
 Status: [ ] todo

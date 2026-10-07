@@ -67,6 +67,18 @@ npm run build
 npm start
 ```
 
+## Calculate from CSV
+
+After `npm run build`:
+
+```sh
+npm run calculate -- path/to/your-inputs.csv
+```
+
+Prints `cost_cents_per_available`, `months_to_recover`, and the policy reminder
+that past-due status is not grounds for lockout. Use `fixtures/shop-fixture.csv`
+only as a test fixture—not real shop costs.
+
 ## Quality checks
 
 ```sh
@@ -78,5 +90,5 @@ npm run build
 
 ## Status
 
-M3: CSV template (`templates/inputs.template.csv`) and `parseInputsCsv`. CLI
-output arrives in M4 (see repo-root `ROADMAP.md`).
+M4: `npm run calculate` CLI prints recovery table from CSV (see above). Web
+upload arrives in M6 (repo-root `ROADMAP.md`).
