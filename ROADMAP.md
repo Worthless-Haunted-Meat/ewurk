@@ -80,20 +80,21 @@ Notes:
 
 ## M5: Lessons 8–10 and index completeness
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Finish the ten-lesson first-month sequence and ensure the index lists `Lesson N — …` titles matching the EWURK convention in SPEC.md.
 
 Acceptance:
 
-- [ ] `lessons/08-email-basics.md`, `09-fixing-common-problems.md`, `10-month-celebration.md` exist and pass structure tests
-- [ ] Exactly ten lesson files numbered `01`–`10`; `npm test` fails if any number is missing or duplicated
-- [ ] Index displays `displayTitle` form `Lesson N — Title` for each entry
-- [ ] Full quality bar passes
+- [x] `lessons/08-email-basics.md`, `09-fixing-common-problems.md`, `10-month-celebration.md` exist and pass structure tests
+- [x] Exactly ten lesson files numbered `01`–`10`; `npm test` fails if any number is missing or duplicated
+- [x] Index displays `displayTitle` form `Lesson N — Title` for each entry
+- [x] Full quality bar passes
 
 Notes:
 
 - Email lesson uses generic webmail in browser; examples use fictional addresses only.
+- `lessonSequence.ts` + `lessonSequence.test.ts` enforce the 01–10 set.
 
 ## M6: Print-friendly HTML and instructor README
 
