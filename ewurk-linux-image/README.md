@@ -267,3 +267,17 @@ npm run typecheck
 npm test
 npm run build
 ```
+
+## Known gaps
+
+- **Separate repository:** Image tooling currently lives in the `ewurk-linux-image/`
+  workspace inside the EWURK monorepo checkout; the intended long-term home is
+  `Worthless-Haunted-Meat/ewurk-linux-image` on its own.
+- **Default build artifact:** `npm run build` without `EWURK_RUN_LB_BUILD=1`
+  produces a **stub** ISO for CI/checksums, not a bootable USB image; volunteers
+  must run the documented full live-build on a prepared Linux host.
+- **VM desktop smoke:** QEMU smoke validates stub ISOs without booting; reaching
+  XFCE and completing first-boot in a VM requires a full ISO build and is
+  documented under QEMU smoke (marker `/var/lib/ewurk-firstboot/done`).
+- **EWURK status updates:** Imaging does not call the ops app; staff still mark
+  devices `imaged` / `available` manually in EWURK.
