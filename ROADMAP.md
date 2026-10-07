@@ -117,18 +117,19 @@ Notes:
 
 ## M7: Polish and release readiness
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: README complete, edge cases handled, fresh-clone verification documented for maintainers.
 
 Acceptance:
 
-- [ ] `README.md` covers license (GPL-3.0), lesson numbering, EWURK topic convention, and all npm scripts
-- [ ] `npm test` covers index↔file link symmetry (no broken hrefs, no orphan lesson files)
-- [ ] Build fails or tests fail on invalid lesson markdown (clear error message)
-- [ ] Maintainer checklist in README: clone → `npm ci` → `npm test` → `npm run build` → `npm start` → open `/`
-- [ ] Full quality bar passes on a clean tree with no generated artifacts committed except as documented (prefer `dist/` gitignored, built in CI)
+- [x] `README.md` covers license (GPL-3.0), lesson numbering, EWURK topic convention, and all npm scripts
+- [x] `npm test` covers index↔file link symmetry (no broken hrefs, no orphan lesson files)
+- [x] Build fails or tests fail on invalid lesson markdown (clear error message)
+- [x] Maintainer checklist in README: clone → `npm ci` → `npm test` → `npm run build` → `npm start` → open `/`
+- [x] Full quality bar passes on a clean tree with no generated artifacts committed except as documented (prefer `dist/` gitignored, built in CI)
 
 Notes:
 
 - Optional: GitHub Actions workflow mirroring EWURK’s lint/test/build—only if requested in a later ops task; not required for v1 product acceptance unless added here in session.
+- `buildSite()` calls `validateAllLessonsOnDisk()` first; `indexLinks.ts` audits symmetry in tests.

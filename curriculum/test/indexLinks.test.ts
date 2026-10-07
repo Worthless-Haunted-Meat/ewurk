@@ -7,6 +7,7 @@ import { buildSite } from '../src/build.js';
 import { listLessonMarkdownFiles } from '../src/lessonsOnDisk.js';
 import { lessonSlugFromFilename } from '../src/lessonMeta.js';
 import { SITE_CSS } from '../src/siteCss.js';
+import { assertIndexLessonLinkSymmetry } from '../src/indexLinks.js';
 
 const packageRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const distDir = path.join(packageRoot, 'dist');
@@ -27,6 +28,11 @@ describe('index links for markdown lessons', () => {
         `index.html must link markdown lesson ${file}`,
       );
     }
+  });
+
+  test('index, markdown lessons, and dist HTML stay in sync', () => {
+    const index = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
+    assertIndexLessonLinkSymmetry(distDir, index);
   });
 
   test('built stylesheet includes print rules that hide navigation chrome', () => {

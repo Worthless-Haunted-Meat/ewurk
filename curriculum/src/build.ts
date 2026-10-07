@@ -5,6 +5,7 @@ import { marked } from 'marked';
 import { distDir } from './paths.js';
 import { listLessonMarkdownFiles, readLessonFile } from './lessonsOnDisk.js';
 import { validateLessonOrThrow } from './lessonSchema.js';
+import { validateAllLessonsOnDisk } from './validateAllLessons.js';
 import { lessonDisplayTitle, lessonSlugFromFilename } from './lessonMeta.js';
 import { SITE_CSS } from './siteCss.js';
 
@@ -17,6 +18,8 @@ function escapeHtml(text: string): string {
 }
 
 export function buildSite(): void {
+  validateAllLessonsOnDisk();
+
   fs.mkdirSync(distDir, { recursive: true });
   fs.mkdirSync(path.join(distDir, 'lessons'), { recursive: true });
 
