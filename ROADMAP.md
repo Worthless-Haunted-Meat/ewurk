@@ -1,0 +1,78 @@
+# EWURK lease economics — roadmap
+
+All commands below are run from `ewurk-lease-economics/` after that directory
+exists. Milestones do not modify EWURK ops payment or lease code under the
+repository root `src/`.
+
+## M1: Walking skeleton
+Status: [ ] todo
+Goal: Scaffold the isolated package with lint, typecheck, test, build, and a trivial HTTP 200 on `GET /`.
+Acceptance:
+- [ ] `ewurk-lease-economics/package.json` exists with scripts `dev`, `build`, `start`, `test`, `lint`, `typecheck`
+- [ ] `cd ewurk-lease-economics && npm ci && npm test` passes with at least one real test (e.g. smoke `GET /`)
+- [ ] `cd ewurk-lease-economics && npm run dev` starts; `curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/` returns `200` (document default `PORT` in README)
+- [ ] `ewurk-lease-economics/README.md` documents clone path, `cd ewurk-lease-economics`, and install/run commands
+Notes:
+- Use GPL-3.0 `LICENSE` in `ewurk-lease-economics/`.
+- Default port should not collide with root EWURK (3000); use 3001 or `PORT`.
+
+## M2: Integer cents domain model
+Status: [ ] todo
+Goal: Implement and test core recovery math in pure modules with fixture numbers only.
+Acceptance:
+- [ ] `cd ewurk-lease-economics && npm test` includes tests for `cost_cents_per_available` and `months_to_recover` using obviously fake cent values
+- [ ] `cd ewurk-lease-economics && npm run typecheck` passes
+- [ ] README states rounding rule for division and that money is integer cents only
+Notes:
+- `monthly_lease_cents` defaults to 2000; tests may override with labeled fixtures.
+
+## M3: CSV template and parser
+Status: [ ] todo
+Goal: Ship an empty/labeled template and strict CSV ingest with validation errors.
+Acceptance:
+- [ ] File `ewurk-lease-economics/templates/inputs.template.csv` exists with header row and an `example` row clearly marked, no implied real shop costs
+- [ ] `cd ewurk-lease-economics && npm test` covers `parseInputsCsv` (missing column, negative cents, `units_reach_available > units_donated` fails)
+- [ ] README lists which columns must be filled from the shop
+Notes:
+- Reject float dollar strings; accept integer cents columns only.
+
+## M4: CLI recovery table
+Status: [ ] todo
+Goal: Operators run one command to print months-to-recover from a CSV file.
+Acceptance:
+- [ ] `cd ewurk-lease-economics && npm run build && node dist/cli.js fixtures/shop-fixture.csv` exits 0 and prints `months_to_recover` and `cost_cents_per_available`
+- [ ] `cd ewurk-lease-economics && npm test` includes a CLI integration test or snapshot of stdout for the fixture file
+- [ ] Output includes the fixed policy sentence that non-payment is not lockout
+Notes:
+- `npm run calculate` script wraps the CLI entry.
+
+## M5: Swap/repair and yield scenarios
+Status: [ ] todo
+Goal: Show how one swap/repair and never-leased units affect effective cost and recovery months.
+Acceptance:
+- [ ] `cd ewurk-lease-economics && npm test` covers yield (`units_donated` vs `units_reach_available`) and `swap_repair_cents` with fixture math
+- [ ] CLI (or second output section) prints `months_after_swap` when `swap_repair_cents` > 0
+- [ ] README explains never-leased units as dilution of batch yield, not a lessee penalty
+Notes:
+- No output field may suggest disabling a device.
+
+## M6: Web UI for CSV upload
+Status: [ ] todo
+Goal: Browser-based path: upload CSV, see the same recovery table as the CLI.
+Acceptance:
+- [ ] `cd ewurk-lease-economics && npm run dev` serves a page with CSV upload or paste
+- [ ] Uploading `fixtures/shop-fixture.csv` shows `months_to_recover` in the HTML response
+- [ ] `cd ewurk-lease-economics && npm test` includes HTTP test for successful parse (status 200 and expected substring)
+Notes:
+- Keep UI minimal; no auth, no persistence.
+
+## M7: Polish and release readiness
+Status: [ ] todo
+Goal: README complete, error states handled, fresh-clone verification documented.
+Acceptance:
+- [ ] `ewurk-lease-economics/README.md` explains lease-as-nudge (not rent), shop-sourced inputs, and explicit non-goals
+- [ ] `cd ewurk-lease-economics && npm run lint && npm run typecheck && npm test && npm run build` all exit 0
+- [ ] README “Fresh clone check” section: clone repo, `cd ewurk-lease-economics`, `npm ci`, `npm test`, `npm run calculate -- templates/inputs.template.csv` (with example row) succeeds
+- [ ] Invalid CSV shows a clear error in CLI (non-zero exit) and web UI (4xx/422 with message) without stack trace to the user
+Notes:
+- Confirm root EWURK app still builds if documented as optional sanity check; economics package must not depend on EWURK DB.
