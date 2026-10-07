@@ -95,7 +95,7 @@ Notes:
 
 ## M6: Telemetry checks and QEMU smoke
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Automate “no phone home on first boot” policy checks and document an unattended VM smoke test to desktop/first-boot completion.
 
