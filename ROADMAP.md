@@ -77,7 +77,7 @@ Notes:
 
 ## M5: USB imaging and wipe disclaimer
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Document and script safe USB writing while stating sanitization is EWURK’s job, not this repo’s.
 
