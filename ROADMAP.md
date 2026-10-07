@@ -113,7 +113,7 @@ Notes:
 
 ## M7: Polish and release readiness
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Complete volunteer-facing docs, error handling in CLI, and fresh-clone verification for charity handoff.
 
