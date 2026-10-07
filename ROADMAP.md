@@ -77,20 +77,21 @@ Notes:
 
 ## M5: USB imaging and wipe disclaimer
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Document and script safe USB writing while stating sanitization is EWURK’s job, not this repo’s.
 
 Acceptance:
 
-- [ ] `README.md` includes explicit NIST/wipe-in-EWURK-before-imaging language and states imaging does not set `available`
-- [ ] `scripts/write-usb.sh` (or documented `dd`/`ventoy` section) shows exact example commands with `DEVICE=` safety guard
-- [ ] `npm test` includes a test that `README.md` contains required disclaimer phrases (stable markers)
-- [ ] `npm run lint` and `npm run typecheck` still exit 0
+- [x] `README.md` includes explicit NIST/wipe-in-EWURK-before-imaging language and states imaging does not set `available`
+- [x] `scripts/write-usb.sh` (or documented `dd`/`ventoy` section) shows exact example commands with `DEVICE=` safety guard
+- [x] `npm test` includes a test that `README.md` contains required disclaimer phrases (stable markers)
+- [x] `npm run lint` and `npm run typecheck` still exit 0
 
 Notes:
 
 - Cross-link to EWURK device lifecycle (`imaged` → `available`) without importing ewurk code.
+- README markers are asserted in `test/readme-disclaimer.test.ts` (`EWURK-WIPE-DISCLAIMER`).
 
 ## M6: Telemetry checks and QEMU smoke
 
