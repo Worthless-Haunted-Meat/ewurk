@@ -29,7 +29,7 @@ Notes:
 - Batch and labor division use round-half-up; months-to-recover uses ceiling at lease cents.
 
 ## M3: CSV template and parser
-Status: [ ] todo
+Status: [~] in progress
 Goal: Ship an empty/labeled template and strict CSV ingest with validation errors.
 Acceptance:
 - [ ] File `ewurk-lease-economics/templates/inputs.template.csv` exists with header row and an `example` row clearly marked, no implied real shop costs
