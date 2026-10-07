@@ -23,6 +23,25 @@ same round-half-up rule:
 **2000 cents** = $20/month): whole months needed until lease payments cover
 `cost_cents_per_available`.
 
+## CSV inputs (from the shop)
+
+Copy `templates/inputs.template.csv` and fill a new row with **your** numbers.
+The shipped `example` row uses obviously fictional values—not Worthless Haunted
+Meat’s costs. Leave dollar amounts out of the sheet: every money field is
+**integer cents**.
+
+| Column | Source |
+| --- | --- |
+| `label` | Optional note (`saturday-shop`, date, etc.). Use `example` only for demos. |
+| `parts_cents` | Parts/consumables per donated unit (typical SSD, RAM, paste, cables). |
+| `labor_minutes` | Refurb time per donated unit in whole minutes. |
+| `labor_cents_per_hour` | Shop-stated volunteer/staff rate in **cents per hour** (your placeholder, not a default “truth”). |
+| `units_donated` | Batch size you attempted this period. |
+| `units_reach_available` | How many of that batch reached `available` (yield / breakage). |
+| `swap_repair_cents` | Extra parts/labor for one swap/repair (0 if unused). |
+
+The lease rate is fixed at **2000 cents/month** in v1 and is not a CSV column.
+
 ## Install
 
 From a fresh clone of the `ewurk` repository:
@@ -59,5 +78,5 @@ npm run build
 
 ## Status
 
-M2: core recovery math in `src/domain/` (integer cents). CSV template and CLI
-arrive in later milestones (see repo-root `ROADMAP.md`).
+M3: CSV template (`templates/inputs.template.csv`) and `parseInputsCsv`. CLI
+output arrives in M4 (see repo-root `ROADMAP.md`).

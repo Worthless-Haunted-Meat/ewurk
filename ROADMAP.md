@@ -29,14 +29,15 @@ Notes:
 - Batch and labor division use round-half-up; months-to-recover uses ceiling at lease cents.
 
 ## M3: CSV template and parser
-Status: [~] in progress
+Status: [x] done
 Goal: Ship an empty/labeled template and strict CSV ingest with validation errors.
 Acceptance:
-- [ ] File `ewurk-lease-economics/templates/inputs.template.csv` exists with header row and an `example` row clearly marked, no implied real shop costs
-- [ ] `cd ewurk-lease-economics && npm test` covers `parseInputsCsv` (missing column, negative cents, `units_reach_available > units_donated` fails)
-- [ ] README lists which columns must be filled from the shop
+- [x] File `ewurk-lease-economics/templates/inputs.template.csv` exists with header row and an `example` row clearly marked, no implied real shop costs
+- [x] `cd ewurk-lease-economics && npm test` covers `parseInputsCsv` (missing column, negative cents, `units_reach_available > units_donated` fails)
+- [x] README lists which columns must be filled from the shop
 Notes:
 - Reject float dollar strings; accept integer cents columns only.
+- Blank template row after `example` is skipped by the parser.
 
 ## M4: CLI recovery table
 Status: [ ] todo
