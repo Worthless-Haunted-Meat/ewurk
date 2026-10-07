@@ -63,19 +63,20 @@ Notes:
 
 ## M4: Lessons 5–7
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Add online safety, search literacy, and pictures/screenshots lessons for Saturdays 5–7.
 
 Acceptance:
 
-- [ ] `lessons/05-staying-safe-online.md`, `06-search-and-trust.md`, `07-pictures-and-screenshots.md` exist and pass structure tests
-- [ ] No paid SaaS, Windows-only steps, or home-broadband assumptions
-- [ ] `npm run build` and `npm test` pass; index links lessons 1–7
+- [x] `lessons/05-staying-safe-online.md`, `06-search-and-trust.md`, `07-pictures-and-screenshots.md` exist and pass structure tests
+- [x] No paid SaaS, Windows-only steps, or home-broadband assumptions
+- [x] `npm run build` and `npm test` pass; index links lessons 1–7
 
 Notes:
 
 - Keep activities feasible on shared lab Linux desktops.
+- Lesson 7 assumes staff pre-seeds `Saturday/shared/sample.jpg` on lab machines.
 
 ## M5: Lessons 8–10 and index completeness
 
