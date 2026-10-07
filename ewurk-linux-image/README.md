@@ -43,6 +43,34 @@ npm test
 npm run build
 ```
 
+Compiles TypeScript and validates `image/manifest.json` against
+`image/lists/desktop.list` (required, forbidden, and firmware packages).
+
+## Image manifest
+
+Recipe metadata lives in `image/manifest.json`. Package selections for the
+desktop image are listed in `image/lists/desktop.list` (one Debian package per
+line; `#` starts a comment).
+
+| Field | Meaning |
+| --- | --- |
+| `version` | Semver of the image recipe (bump when packages or overlay change). |
+| `codename` | Human label for release notes (e.g. `ewurk-2026.04`). |
+| `baseSuite` | Debian suite (`bookworm` for v1). |
+| `architecture` | `amd64` for v1 Intel/AMD laptops. |
+| `desktop` | `xfce` for v1. |
+| `requiredPackages` | Must appear in `desktop.list`. |
+| `forbiddenPackages` | Must not appear (telemetry / snap / Ubuntu phone-home packages). |
+| `firmwarePackages` | Non-free firmware metapackages expected in the list for Wi‑Fi. |
+| `firstBootVersion` | Semver of first-boot overlay scripts (M3+). |
+
+To ship a new image recipe:
+
+1. Edit `image/lists/desktop.list` (and overlay files when present).
+2. Bump `version` in `image/manifest.json` (and `firstBootVersion` when
+   first-boot scripts change).
+3. Run `npm test` and `npm run build` — both enforce the package policy.
+
 ## Quality bar
 
 ```sh

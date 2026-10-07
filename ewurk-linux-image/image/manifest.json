@@ -1,0 +1,29 @@
+{
+  "version": "0.1.0",
+  "codename": "ewurk-2026.04",
+  "baseSuite": "bookworm",
+  "architecture": "amd64",
+  "desktop": "xfce",
+  "requiredPackages": [
+    "firefox-esr",
+    "libreoffice-writer",
+    "network-manager",
+    "cups",
+    "xfce4",
+    "xfce4-terminal",
+    "thunar"
+  ],
+  "forbiddenPackages": [
+    "apport",
+    "popularity-contest",
+    "snapd",
+    "ubuntu-report",
+    "ubuntu-advantage-tools",
+    "whoopsie"
+  ],
+  "firmwarePackages": [
+    "firmware-linux-nonfree",
+    "firmware-realtek"
+  ],
+  "firstBootVersion": "0.1.0"
+}

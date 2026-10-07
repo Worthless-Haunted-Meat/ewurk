@@ -23,20 +23,21 @@ Notes:
 
 ## M2: Image manifest and policy tests
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Check in `image/manifest.json`, package lists, and automated tests that define required, forbidden, and firmware packages.
 
 Acceptance:
 
-- [ ] `image/manifest.json` exists and matches `src/manifest/schema.ts`
-- [ ] `npm test` includes failing cases for forbidden packages (e.g. `ubuntu-report`, `snapd`) when present in fixture lists
-- [ ] `npm run build` runs TypeScript compile and manifest validation (no live-build required yet)
-- [ ] `README.md` documents manifest fields and how to bump `version`
+- [x] `image/manifest.json` exists and matches `src/manifest/schema.ts`
+- [x] `npm test` includes failing cases for forbidden packages (e.g. `ubuntu-report`, `snapd`) when present in fixture lists
+- [x] `npm run build` runs TypeScript compile and manifest validation (no live-build required yet)
+- [x] `README.md` documents manifest fields and how to bump `version`
 
 Notes:
 
 - Forbidden list should encode the “no phone home” policy as concrete package/service names.
+- Paths are under `ewurk-linux-image/`; `npm run build` runs `dist/cli/validateManifest.js` after `tsc`.
 
 ## M3: live-build config and rootfs overlay
 
