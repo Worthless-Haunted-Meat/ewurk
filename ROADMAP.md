@@ -41,7 +41,7 @@ Notes:
 
 ## M3: live-build config and rootfs overlay
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Add Debian live-build configuration and overlay files including first-boot systemd unit and scripts (locale, keyboard, single user).
 
