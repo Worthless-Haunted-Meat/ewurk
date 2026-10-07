@@ -40,7 +40,7 @@ Notes:
 - Blank template row after `example` is skipped by the parser.
 
 ## M4: CLI recovery table
-Status: [ ] todo
+Status: [~] in progress
 Goal: Operators run one command to print months-to-recover from a CSV file.
 Acceptance:
 - [ ] `cd ewurk-lease-economics && npm run build && node dist/cli.js fixtures/shop-fixture.csv` exits 0 and prints `months_to_recover` and `cost_cents_per_available`
