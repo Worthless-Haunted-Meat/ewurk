@@ -9,6 +9,56 @@ verification. It does **not** replace the [EWURK operations
 app](https://github.com/Worthless-Haunted-Meat/ewurk); wipe and device status
 stay in that system.
 
+## Wipe before imaging (EWURK ops app)
+
+<!-- EWURK-WIPE-DISCLAIMER -->
+
+This repository **does not sanitize disks** and is **not** a NIST wipe tool.
+Before you flash a laptop:
+
+1. Complete the charity’s **NIST wipe** on the machine.
+2. **Record that wipe in EWURK** (method, date, operator) on the device record —
+   the NIST wipe must be **recorded in EWURK before imaging**.
+3. Only then image the machine with the ISO from this repo.
+
+Flashing or installing this image **does not** change EWURK status by itself.
+In EWURK, a device moves `wiped` → … → `imaged` → `available` → `leased` only
+when staff update the record. **imaging does not make a device `available`.**
+A wipe recorded in EWURK is required before marking a device `available`.
+
+See the [EWURK device lifecycle](https://github.com/Worthless-Haunted-Meat/ewurk)
+in the operations app — this repo never substitutes for that workflow.
+
+## Write a bootable USB
+
+After `npm run build` (or a full `EWURK_RUN_LB_BUILD=1` build), verify the ISO
+checksum, identify the **correct** removable disk, then write it.
+
+```sh
+cd dist && sha256sum -c SHA256SUMS
+lsblk -p
+```
+
+### `dd` (exact command)
+
+Use the safety wrapper — it **requires** `DEVICE=` and refuses to guess:
+
+```sh
+ISO=dist/ewurk-ewurk-2026.04-0.1.0.iso DEVICE=/dev/sdX ./scripts/write-usb.sh
+```
+
+Replace `/dev/sdX` with the whole-disk device from `lsblk` (for example
+`DEVICE=/dev/sdb`). The script prompts for `YES` before calling `dd`.
+
+### Ventoy (copy ISO)
+
+Install [Ventoy](https://www.ventoy.net/) on the USB, then copy the built ISO
+onto the Ventoy partition:
+
+```sh
+cp dist/ewurk-ewurk-2026.04-0.1.0.iso /media/$USER/Ventoy/
+```
+
 ## Install
 
 From the repository root (npm workspaces):
