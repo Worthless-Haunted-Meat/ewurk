@@ -80,7 +80,7 @@ Notes:
 
 ## M5: Lessons 8–10 and index completeness
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Finish the ten-lesson first-month sequence and ensure the index lists `Lesson N — …` titles matching the EWURK convention in SPEC.md.
 
