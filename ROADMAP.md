@@ -59,7 +59,7 @@ Notes:
 
 ## M4: Produce bootable ISO artifact
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Wire `npm run build` to run live-build and emit `dist/*.iso` plus `dist/SHA256SUMS` on a properly equipped Linux host.
 
