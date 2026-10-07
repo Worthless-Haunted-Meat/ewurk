@@ -62,7 +62,7 @@ Notes:
 - CLI adds a `yield:` narrative line for batch dilution context.
 
 ## M6: Web UI for CSV upload
-Status: [ ] todo
+Status: [~] in progress
 Goal: Browser-based path: upload CSV, see the same recovery table as the CLI.
 Acceptance:
 - [ ] `cd ewurk-lease-economics && npm run dev` serves a page with CSV upload or paste
