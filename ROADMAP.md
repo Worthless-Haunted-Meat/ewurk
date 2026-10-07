@@ -73,7 +73,7 @@ Notes:
 - File upload reads CSV in the browser then posts `csv_text` (no multipart parser on server).
 
 ## M7: Polish and release readiness
-Status: [ ] todo
+Status: [~] in progress
 Goal: README complete, error states handled, fresh-clone verification documented.
 Acceptance:
 - [ ] `ewurk-lease-economics/README.md` explains lease-as-nudge (not rent), shop-sourced inputs, and explicit non-goals
