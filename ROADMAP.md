@@ -113,18 +113,19 @@ Notes:
 
 ## M7: Polish and release readiness
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Complete volunteer-facing docs, error handling in CLI, and fresh-clone verification for charity handoff.
 
 Acceptance:
 
-- [ ] `README.md` enables a novice to produce a bootable USB from a clean clone without undocumented steps
-- [ ] `npm ci && npm run lint && npm run typecheck && npm test && npm run build` all exit 0 on a documented reference host (full ISO build step called out)
-- [ ] CLI prints actionable errors when `lb` or host deps are missing (non-zero exit, no stack trace dump to user)
-- [ ] `LICENSE` is GPL-3.0 and matches file headers where applicable
-- [ ] `GET /` on `npm run dev` still returns 200 and points to README sections for build and USB
+- [x] `README.md` enables a novice to produce a bootable USB from a clean clone without undocumented steps
+- [x] `npm ci && npm run lint && npm run typecheck && npm test && npm run build` all exit 0 on a documented reference host (full ISO build step called out)
+- [x] CLI prints actionable errors when `lb` or host deps are missing (non-zero exit, no stack trace dump to user)
+- [x] `LICENSE` is GPL-3.0 and matches file headers where applicable
+- [x] `GET /` on `npm run dev` still returns 200 and points to README sections for build and USB
 
 Notes:
 
 - Tag-ready `image/manifest.json` `version` and changelog section in README.
+- CLI preflight uses `src/cli/hostDeps.ts`; SPDX headers on CLI and `app.ts`.

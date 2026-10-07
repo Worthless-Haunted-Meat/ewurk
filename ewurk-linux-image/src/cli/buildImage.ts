@@ -1,8 +1,15 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { copyFile, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import { cliError, formatCommandFailure } from './errors.js';
+import {
+  formatMissingHostDepsMessage,
+  missingHostBinaries,
+} from './hostDeps.js';
 import { loadImageManifest } from '../manifest/load.js';
 import type { BuildArtifact } from '../manifest/buildMetadata.js';
 import { packageRoot } from '../paths.js';
@@ -19,12 +26,18 @@ async function runCommand(
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const child = spawn(command, args, { cwd, stdio: 'inherit' });
-    child.on('error', reject);
+    child.on('error', (err) => {
+      reject(new Error(formatCommandFailure(command, err.message)));
+    });
     child.on('close', (code) => {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`${command} ${args.join(' ')} exited ${code ?? 'unknown'}`));
+        reject(
+          new Error(
+            formatCommandFailure(command, `exited with status ${code ?? 'unknown'}`),
+          ),
+        );
       }
     });
   });
@@ -104,6 +117,10 @@ async function main(): Promise<void> {
   const distIsoPath = path.join(distDir, isoFile);
 
   if (process.env.EWURK_RUN_LB_BUILD === '1') {
+    const missing = missingHostBinaries();
+    if (missing.length > 0) {
+      cliError(formatMissingHostDepsMessage(missing));
+    }
     process.stdout.write('Running live-build (requires root, network, and host packages)…\n');
     await buildWithLiveBuild(imageDir, distIsoPath);
   } else {
@@ -121,6 +138,5 @@ async function main(): Promise<void> {
 
 main().catch((err: unknown) => {
   const message = err instanceof Error ? err.message : String(err);
-  process.stderr.write(`${message}\n`);
-  process.exit(1);
+  cliError(message);
 });

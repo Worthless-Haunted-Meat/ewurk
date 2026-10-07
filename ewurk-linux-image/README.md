@@ -5,9 +5,62 @@ See `../SPEC.md` for the full product specification and `../ROADMAP.md` for
 milestones.
 
 This directory is the Node/TypeScript workspace for build orchestration and
-verification. It does **not** replace the [EWURK operations
+verification. It is licensed under **GPL-3.0-or-later** (see `LICENSE`). It
+does **not** replace the [EWURK operations
 app](https://github.com/Worthless-Haunted-Meat/ewurk); wipe and device status
 stay in that system.
+
+## Volunteer quick start
+
+End-to-end path from a clean clone to a USB ready for shop imaging (on a
+Debian/Ubuntu **amd64** build PC):
+
+1. **Clone and install tooling**
+   ```sh
+   git clone https://github.com/Worthless-Haunted-Meat/ewurk.git
+   cd ewurk
+   npm ci
+   ```
+   (Standalone `ewurk-linux-image` checkout: `cd ewurk-linux-image` after clone.)
+2. **Install image build host packages** (once per machine)
+   ```sh
+   cd ewurk-linux-image
+   sudo ./scripts/host-deps.sh --install
+   ```
+3. **Run checks** (no root required)
+   ```sh
+   npm run lint && npm run typecheck && npm test
+   ```
+4. **Build a bootable ISO** (root, network, ~20 GiB disk, ~45–90 min)
+   ```sh
+   sudo -E EWURK_RUN_LB_BUILD=1 npm run build
+   ```
+   Skip step 4 for a quick stub ISO only: `npm run build` (not for USB).
+5. **Verify checksum**
+   ```sh
+   cd ewurk-linux-image/dist && sha256sum -c SHA256SUMS
+   ```
+6. **Record NIST wipe in EWURK** on the laptop *before* imaging (see below).
+7. **Write USB** (replace `/dev/sdX` after `lsblk -p`)
+   ```sh
+   cd ewurk-linux-image
+   ISO=dist/ewurk-ewurk-2026.04-0.1.0.iso DEVICE=/dev/sdX ./scripts/write-usb.sh
+   ```
+
+### Reference host (maintainers)
+
+From the repository root, this chain should exit 0 on Node 22+ without a full
+live-build (stub ISO). Run the full ISO step separately on a prepared build host.
+
+```sh
+npm ci && npm run lint && npm run typecheck && npm test && npm run build
+```
+
+## Changelog
+
+| Image `version` | Codename | Notes |
+| --- | --- | --- |
+| `0.1.0` | `ewurk-2026.04` | Initial bookworm amd64 XFCE recipe, offline first-boot overlay, telemetry policy tests. |
 
 ## Wipe before imaging (EWURK ops app)
 

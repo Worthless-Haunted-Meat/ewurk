@@ -26,8 +26,14 @@ describe('GET /', () => {
   it('returns HTTP 200 with project metadata', async () => {
     const response = await fetch(`${baseUrl}/`);
     assert.equal(response.status, 200);
-    const body = (await response.json()) as { ok: boolean; project: string };
+    const body = (await response.json()) as {
+      ok: boolean;
+      project: string;
+      readmeSections: { build: string; writeUsb: string };
+    };
     assert.equal(body.ok, true);
     assert.equal(body.project, 'ewurk-linux-image');
+    assert.match(body.readmeSections.build, /README\.md#build/);
+    assert.match(body.readmeSections.writeUsb, /write-a-bootable-usb/);
   });
 });

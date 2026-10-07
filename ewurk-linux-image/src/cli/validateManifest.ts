@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 import { readFile } from 'node:fs/promises';
 
 import { loadImageManifest } from '../manifest/load.js';
