@@ -5,7 +5,7 @@ exists. Milestones do not modify EWURK ops payment or lease code under the
 repository root `src/`.
 
 ## M1: Walking skeleton
-Status: [ ] todo
+Status: [~] in progress
 Goal: Scaffold the isolated package with lint, typecheck, test, build, and a trivial HTTP 200 on `GET /`.
 Acceptance:
 - [ ] `ewurk-lease-economics/package.json` exists with scripts `dev`, `build`, `start`, `test`, `lint`, `typecheck`
