@@ -2,7 +2,7 @@
 
 ## M1: Walking skeleton
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Scaffold the Node/TypeScript repo with lint, typecheck, tests, and a minimal dev server so the pipeline is provably green before image work.
 
