@@ -2,6 +2,8 @@
 
 EWURK topic: **Lesson 1 — Welcome and the Linux desktop**
 
+Instructor: read each numbered step aloud. Pause for hands-on help. When class ends, mark attendance in EWURK (roster from active leases)—not on this page.
+
 ## Goal
 
 Everyone can sign in to the lab computer, find the web browser and home folder, and shut down the machine respectfully at the end of class.

@@ -44,21 +44,22 @@ Notes:
 
 ## M3: Lessons 1–4
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Publish the first month’s first four instructor-ready lessons (welcome, browser, files, typing).
 
 Acceptance:
 
-- [ ] `lessons/01-welcome-linux-desktop.md` through `lessons/04-typing-and-text.md` exist and pass structure tests
-- [ ] Each lesson includes goal, materials, 3–5 steps, 10-minute fallback, and done criteria; no family PII
-- [ ] `npm run build` emits HTML for lessons 1–4
-- [ ] Index at `dist/index.html` links to all existing lessons
-- [ ] `npm test` and full quality bar pass
+- [x] `lessons/01-welcome-linux-desktop.md` through `lessons/04-typing-and-text.md` exist and pass structure tests
+- [x] Each lesson includes goal, materials, 3–5 steps, 10-minute fallback, and done criteria; no family PII
+- [x] `npm run build` emits HTML for lessons 1–4
+- [x] Index at `dist/index.html` links to all existing lessons
+- [x] `npm test` and full quality bar pass
 
 Notes:
 
 - Wording must allow a non-teacher to run Lesson 1 from the built page alone.
+- Build uses `marked` for lesson HTML; `lessonMeta.ts` supplies EWURK-style index titles.
 
 ## M4: Lessons 5–7
 
