@@ -23,7 +23,7 @@ Notes:
 
 ## M2: Image manifest and policy tests
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Check in `image/manifest.json`, package lists, and automated tests that define required, forbidden, and firmware packages.
 
