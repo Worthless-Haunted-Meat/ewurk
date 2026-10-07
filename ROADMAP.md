@@ -4,7 +4,7 @@ Milestones are ordered by dependency, then user value. Each should be completabl
 
 ## M1: Walking skeleton
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Project scaffold with lint, typecheck, test, build, and dev server so `GET /` returns 200 before any real lessons exist.
 
