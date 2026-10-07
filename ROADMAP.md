@@ -73,12 +73,13 @@ Notes:
 - File upload reads CSV in the browser then posts `csv_text` (no multipart parser on server).
 
 ## M7: Polish and release readiness
-Status: [~] in progress
+Status: [x] done
 Goal: README complete, error states handled, fresh-clone verification documented.
 Acceptance:
-- [ ] `ewurk-lease-economics/README.md` explains lease-as-nudge (not rent), shop-sourced inputs, and explicit non-goals
-- [ ] `cd ewurk-lease-economics && npm run lint && npm run typecheck && npm test && npm run build` all exit 0
-- [ ] README “Fresh clone check” section: clone repo, `cd ewurk-lease-economics`, `npm ci`, `npm test`, `npm run calculate -- templates/inputs.template.csv` (with example row) succeeds
-- [ ] Invalid CSV shows a clear error in CLI (non-zero exit) and web UI (4xx/422 with message) without stack trace to the user
+- [x] `ewurk-lease-economics/README.md` explains lease-as-nudge (not rent), shop-sourced inputs, and explicit non-goals
+- [x] `cd ewurk-lease-economics && npm run lint && npm run typecheck && npm test && npm run build` all exit 0
+- [x] README “Fresh clone check” section: clone repo, `cd ewurk-lease-economics`, `npm ci`, `npm test`, `npm run calculate -- templates/inputs.template.csv` (with example row) succeeds
+- [x] Invalid CSV shows a clear error in CLI (non-zero exit) and web UI (4xx/422 with message) without stack trace to the user
 Notes:
 - Confirm root EWURK app still builds if documented as optional sanity check; economics package must not depend on EWURK DB.
+- Added `fixtures/invalid-negative.csv` for CLI/web error tests.

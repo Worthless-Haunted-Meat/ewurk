@@ -33,6 +33,17 @@ describe('CLI recovery table', () => {
     assert.match(out, /swap_repair_cents: 4500/);
   });
 
+  test('invalid CSV exits non-zero with message and no stack trace', () => {
+    const badPath = fileURLToPath(new URL('../fixtures/invalid-negative.csv', import.meta.url));
+    const run = spawnSync(process.execPath, ['dist/cli.js', badPath], {
+      cwd: packageRoot,
+      encoding: 'utf8',
+    });
+    assert.notEqual(run.status, 0);
+    assert.match(run.stderr, /Error:.*parts_cents/);
+    assert.doesNotMatch(run.stderr, /^\s+at /m);
+  });
+
   test('built dist/cli.js matches calculateFromCsvFile stdout', () => {
     const built = spawnSync(process.execPath, ['dist/cli.js', fixturePath], {
       cwd: packageRoot,

@@ -51,6 +51,20 @@ describe('HTTP smoke', () => {
     assert.match(body, /cost_cents_per_available/);
   });
 
+  test('POST /calculate with invalid CSV returns 422 and user-facing error', async () => {
+    const invalid = `${shopFixtureCsv.split('\n')[0]}\nfixture-invalid,-1,0,0,1,1,0\n`;
+    const res = await fetch(`${baseUrl}/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ csv_text: invalid }),
+    });
+    assert.equal(res.status, 422);
+    const body = await res.text();
+    assert.match(body, /parts_cents/);
+    assert.doesNotMatch(body, /at Object\./);
+    assert.doesNotMatch(body, /node_modules/);
+  });
+
   test('GET /health returns ok JSON', async () => {
     const res = await fetch(`${baseUrl}/health`);
     assert.equal(res.status, 200);

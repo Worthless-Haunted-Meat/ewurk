@@ -3,10 +3,27 @@
 Small, shop-driven model of whether the program’s fixed **$20/month** lease fee
 covers real refurb cost. This package lives inside the
 [Worthless-Haunted-Meat/ewurk](https://github.com/Worthless-Haunted-Meat/ewurk)
-monorepo and does **not** modify the main operations app.
+monorepo and does **not** modify the main operations app (`src/` leases,
+payments, or ledgers).
 
-The lease is a behavioral nudge to encourage returns—not rent or a debt
-instrument. This tool will never recommend disabling a device for non-payment.
+## What $20/month means (read this first)
+
+The lease is a **behavioral nudge** to encourage families to return devices—not
+**rent**, not a debt instrument, and not a basis for lockout. EWURK may flag a
+lease as past-due for staff follow-up; this calculator never recommends disabling,
+wiping, or repossessing a device for non-payment.
+
+All **inputs** (parts, minutes, yield, volunteer rate) must come from **your
+shop’s records**. Shipped `example` and `fixtures/` rows are labeled fiction for
+tests and demos—not Worthless Haunted Meat’s actual costs.
+
+## Non-goals (v1)
+
+- Inventing or presenting default refurb costs as organizational facts.
+- Collections, credit scoring, dunning, or shutoff/repossession recommendations.
+- Stripe, Square, or payment processor integration; importing EWURK payment exports.
+- Replacing EWURK’s payment UI or changing ops-app payment logic.
+- Float dollar math (use integer **cents** only).
 
 ## Money and rounding
 
@@ -66,6 +83,25 @@ cd ewurk-lease-economics
 npm ci
 ```
 
+Requires **Node 22.5+**. Licensed **GPL-3.0-or-later** (see `LICENSE`).
+
+## Fresh clone check
+
+From repository root:
+
+```sh
+git clone https://github.com/Worthless-Haunted-Meat/ewurk.git
+cd ewurk/ewurk-lease-economics
+npm ci
+npm test
+npm run calculate -- templates/inputs.template.csv
+```
+
+The last command should print recovery output for the labeled `example` row only
+(blank template rows are skipped). Optional: from repo root, `npm ci && npm run build`
+verifies the separate EWURK ops app still compiles; this package does not use its
+database.
+
 ## Run (development)
 
 ```sh
@@ -74,7 +110,8 @@ npm run dev
 
 Serves on **http://localhost:3001** unless `PORT` is set. Open `GET /`, paste
 CSV or upload a file, and submit **Calculate recovery** to see the same table as
-the CLI.
+the CLI. Invalid CSV shows a short error message (HTTP 400/422) with no stack
+trace in the page.
 
 ## Production build
 
@@ -92,8 +129,9 @@ npm run calculate -- path/to/your-inputs.csv
 ```
 
 Prints `cost_cents_per_available`, `months_to_recover`, and the policy reminder
-that past-due status is not grounds for lockout. Use `fixtures/shop-fixture.csv`
-only as a test fixture—not real shop costs.
+that past-due status is not grounds for lockout. Invalid input prints `Error: …`
+to stderr and exits non-zero. Use `fixtures/shop-fixture.csv` only as a test
+fixture—not real shop costs.
 
 ## Quality checks
 
@@ -104,7 +142,6 @@ npm test
 npm run build
 ```
 
-## Status
+## License
 
-M6: web UI at `/` with CSV paste or file upload (`POST /calculate`). M7 covers
-polish and fresh-clone checklist (repo-root `ROADMAP.md`).
+GPL-3.0-or-later. See `LICENSE` in this directory.
