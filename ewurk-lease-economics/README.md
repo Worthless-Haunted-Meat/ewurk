@@ -42,6 +42,21 @@ Meat’s costs. Leave dollar amounts out of the sheet: every money field is
 
 The lease rate is fixed at **2000 cents/month** in v1 and is not a CSV column.
 
+### Yield (machines that never reach `available`)
+
+`units_reach_available` must be ≤ `units_donated`. Units that never make it to
+`available` still consumed parts and labor; the model spreads that whole batch
+cost across the successful units. That raises `cost_cents_per_available`—it is
+**batch dilution**, not a fee or penalty charged to a lessee family. A machine
+that never leases is an ops yield problem, not a collections lever.
+
+### Swap / repair
+
+`swap_repair_cents` models one in-field repair (parts + labor) allocated to a
+unit already in the field. When greater than zero, the CLI also prints
+`months_after_swap` (recovery months if that repair cost were folded into the
+unit’s effective cost).
+
 ## Install
 
 From a fresh clone of the `ewurk` repository:
@@ -90,5 +105,5 @@ npm run build
 
 ## Status
 
-M4: `npm run calculate` CLI prints recovery table from CSV (see above). Web
-upload arrives in M6 (repo-root `ROADMAP.md`).
+M5: CLI reports yield dilution and `months_after_swap` when `swap_repair_cents` > 0.
+Web upload arrives in M6 (repo-root `ROADMAP.md`).

@@ -26,6 +26,13 @@ describe('CLI recovery table', () => {
     assert.match(out, /months_to_recover: 5/);
   });
 
+  test('swap fixture prints months_after_swap when swap_repair_cents > 0', () => {
+    const swapFixture = fileURLToPath(new URL('../fixtures/swap-fixture.csv', import.meta.url));
+    const out = calculateFromCsvFile(swapFixture);
+    assert.match(out, /months_after_swap: 6/);
+    assert.match(out, /swap_repair_cents: 4500/);
+  });
+
   test('built dist/cli.js matches calculateFromCsvFile stdout', () => {
     const built = spawnSync(process.execPath, ['dist/cli.js', fixturePath], {
       cwd: packageRoot,

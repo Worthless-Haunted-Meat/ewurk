@@ -51,14 +51,15 @@ Notes:
 - `npm test` runs `build` first so `dist/cli.js` exists for the spawn test.
 
 ## M5: Swap/repair and yield scenarios
-Status: [~] in progress
+Status: [x] done
 Goal: Show how one swap/repair and never-leased units affect effective cost and recovery months.
 Acceptance:
-- [ ] `cd ewurk-lease-economics && npm test` covers yield (`units_donated` vs `units_reach_available`) and `swap_repair_cents` with fixture math
-- [ ] CLI (or second output section) prints `months_after_swap` when `swap_repair_cents` > 0
-- [ ] README explains never-leased units as dilution of batch yield, not a lessee penalty
+- [x] `cd ewurk-lease-economics && npm test` covers yield (`units_donated` vs `units_reach_available`) and `swap_repair_cents` with fixture math
+- [x] CLI (or second output section) prints `months_after_swap` when `swap_repair_cents` > 0
+- [x] README explains never-leased units as dilution of batch yield, not a lessee penalty
 Notes:
 - No output field may suggest disabling a device.
+- CLI adds a `yield:` narrative line for batch dilution context.
 
 ## M6: Web UI for CSV upload
 Status: [ ] todo
