@@ -2,6 +2,13 @@
 
 Markdown lessons and a small static site for Saturday instructors. **Attendance lives in [EWURK](https://github.com/Worthless-Haunted-Meat/ewurk)**—create a class session, build the roster from active leases, mark present or absent. This repository only hosts lesson content.
 
+## Instructor
+
+1. **Before class:** run `npm run build` (or use a hosted copy of `dist/`), open the index, and print or project the lesson for today—e.g. `/lessons/01-welcome-linux-desktop.html`. Read the steps aloud; you do not need another lesson plan.
+2. **In EWURK:** create a class session whose **topic** matches the lesson title exactly, e.g. `Lesson 3 — Files and folders` (see `SPEC.md` at the repo root). Use **Build roster** so every family on an active lease appears; this curriculum does not build rosters.
+3. **After class:** mark each family **present** or **absent** in EWURK only. Nothing in this repo records attendance.
+4. **Print tip:** lesson pages hide the “All lessons” link when printed (`@media print` in `style.css`).
+
 ## Quick start
 
 From this directory (`curriculum/`):

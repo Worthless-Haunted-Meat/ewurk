@@ -98,21 +98,22 @@ Notes:
 
 ## M6: Print-friendly HTML and instructor README
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Make built pages easy to read and print in class, and document how instructors pair sessions with EWURK.
 
 Acceptance:
 
-- [ ] Shared CSS in build output: readable typography, `@media print` hides nav chrome
-- [ ] `README.md` includes a short **Instructor** section: EWURK roster/attendance vs this repo; title matching; no attendance here
-- [ ] `curl -s http://localhost:PORT/lessons/01-welcome-linux-desktop.html` (or actual slug) returns 200 after `npm run build` and `npm start`
-- [ ] `npm test` includes a check that every `lessons/*.md` file is linked from generated `dist/index.html`
-- [ ] Full quality bar passes
+- [x] Shared CSS in build output: readable typography, `@media print` hides nav chrome
+- [x] `README.md` includes a short **Instructor** section: EWURK roster/attendance vs this repo; title matching; no attendance here
+- [x] `curl -s http://localhost:PORT/lessons/01-welcome-linux-desktop.html` (or actual slug) returns 200 after `npm run build` and `npm start`
+- [x] `npm test` includes a check that every `lessons/*.md` file is linked from generated `dist/index.html`
+- [x] Full quality bar passes
 
 Notes:
 
 - Do not add EWURK code changes; link to EWURK repo/docs only.
+- Print styles live in `src/siteCss.ts`; `serverSmoke.test.ts` covers lesson URL 200.
 
 ## M7: Polish and release readiness
 
