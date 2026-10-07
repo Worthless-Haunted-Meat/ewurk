@@ -13,3 +13,11 @@ export function manifestPath(): string {
 export function desktopPackageListPath(): string {
   return path.join(packageRoot(), 'image', 'lists', 'desktop.list');
 }
+
+export function imageLiveBuildDir(): string {
+  return path.join(packageRoot(), 'image');
+}
+
+export function distDir(): string {
+  return path.join(packageRoot(), 'dist');
+}

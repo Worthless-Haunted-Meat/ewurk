@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json && node dist/cli/validateManifest.js",
+    "build": "tsc -p tsconfig.json && node dist/cli/validateManifest.js && node dist/cli/buildImage.js",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

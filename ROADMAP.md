@@ -59,20 +59,21 @@ Notes:
 
 ## M4: Produce bootable ISO artifact
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Wire `npm run build` to run live-build and emit `dist/*.iso` plus `dist/SHA256SUMS` on a properly equipped Linux host.
 
 Acceptance:
 
-- [ ] `npm run build` writes `dist/build-metadata.json` matching SPEC `BuildArtifact` fields
-- [ ] `dist/SHA256SUMS` verifies the ISO (`sha256sum -c` succeeds)
-- [ ] `npm test` validates `build-metadata.json` schema when present (CI may use committed fixture)
-- [ ] `README.md` documents full build command, expected duration, and disk space requirements
+- [x] `npm run build` writes `dist/build-metadata.json` matching SPEC `BuildArtifact` fields
+- [x] `dist/SHA256SUMS` verifies the ISO (`sha256sum -c` succeeds)
+- [x] `npm test` validates `build-metadata.json` schema when present (CI may use committed fixture)
+- [x] `README.md` documents full build command, expected duration, and disk space requirements
 
 Notes:
 
 - CI may skip full `lb build` if runners lack root; document local-only full build clearly.
+- Default `npm run build` writes a stub ISO; `EWURK_RUN_LB_BUILD=1` (with sudo) runs live-build on a prepared host.
 
 ## M5: USB imaging and wipe disclaimer
 

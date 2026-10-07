@@ -37,14 +37,39 @@ Serves the tooling health endpoint at `http://localhost:3000/` (override with
 npm test
 ```
 
-## Build (TypeScript compile only until M4)
+## Build
+
+Default (CI and quick local check — **not** a bootable USB image):
 
 ```sh
 npm run build
 ```
 
-Compiles TypeScript and validates `image/manifest.json` against
-`image/lists/desktop.list` (required, forbidden, and firmware packages).
+This compiles TypeScript, validates `image/manifest.json` against
+`image/lists/desktop.list`, and writes:
+
+- `dist/*.iso` — stub payload when live-build is skipped
+- `dist/SHA256SUMS` — `sha256sum -c` checksum file
+- `dist/build-metadata.json` — manifest version, ISO path, size, digest
+
+Verify checksums:
+
+```sh
+cd dist && sha256sum -c SHA256SUMS
+```
+
+### Full bootable ISO (Linux build host)
+
+Requires host packages (`sudo ./scripts/host-deps.sh --install`), **root**
+for `lb build`, outbound network for Debian mirrors, ~**20 GiB** free disk,
+and typically **45–90 minutes** on a shop PC.
+
+```sh
+sudo -E EWURK_RUN_LB_BUILD=1 npm run build
+```
+
+`EWURK_RUN_LB_BUILD=1` runs `lb config`, `lb clean`, and `lb build` under
+`image/`, then copies the produced `.iso` into `dist/` with checksums.
 
 ## Host packages (image build)
 
