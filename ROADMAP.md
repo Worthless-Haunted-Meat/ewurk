@@ -98,7 +98,7 @@ Notes:
 
 ## M6: Print-friendly HTML and instructor README
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Make built pages easy to read and print in class, and document how instructors pair sessions with EWURK.
 
