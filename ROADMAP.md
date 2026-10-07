@@ -62,14 +62,15 @@ Notes:
 - CLI adds a `yield:` narrative line for batch dilution context.
 
 ## M6: Web UI for CSV upload
-Status: [~] in progress
+Status: [x] done
 Goal: Browser-based path: upload CSV, see the same recovery table as the CLI.
 Acceptance:
-- [ ] `cd ewurk-lease-economics && npm run dev` serves a page with CSV upload or paste
-- [ ] Uploading `fixtures/shop-fixture.csv` shows `months_to_recover` in the HTML response
-- [ ] `cd ewurk-lease-economics && npm test` includes HTTP test for successful parse (status 200 and expected substring)
+- [x] `cd ewurk-lease-economics && npm run dev` serves a page with CSV upload or paste
+- [x] Uploading `fixtures/shop-fixture.csv` shows `months_to_recover` in the HTML response
+- [x] `cd ewurk-lease-economics && npm test` includes HTTP test for successful parse (status 200 and expected substring)
 Notes:
 - Keep UI minimal; no auth, no persistence.
+- File upload reads CSV in the browser then posts `csv_text` (no multipart parser on server).
 
 ## M7: Polish and release readiness
 Status: [ ] todo

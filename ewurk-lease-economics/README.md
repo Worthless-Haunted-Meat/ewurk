@@ -72,8 +72,9 @@ npm ci
 npm run dev
 ```
 
-Serves on **http://localhost:3001** unless `PORT` is set. `GET /` should return
-200.
+Serves on **http://localhost:3001** unless `PORT` is set. Open `GET /`, paste
+CSV or upload a file, and submit **Calculate recovery** to see the same table as
+the CLI.
 
 ## Production build
 
@@ -105,5 +106,5 @@ npm run build
 
 ## Status
 
-M5: CLI reports yield dilution and `months_after_swap` when `swap_repair_cents` > 0.
-Web upload arrives in M6 (repo-root `ROADMAP.md`).
+M6: web UI at `/` with CSV paste or file upload (`POST /calculate`). M7 covers
+polish and fresh-clone checklist (repo-root `ROADMAP.md`).
