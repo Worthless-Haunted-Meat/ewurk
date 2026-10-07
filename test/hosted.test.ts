@@ -4,6 +4,7 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApp } from '../src/app.js';
+import { healthBody } from '../src/health.js';
 import { createMailerFromEnv } from '../src/adapters/mail/createMailer.js';
 import { openDb } from '../src/db/connection.js';
 import { buildDepsFromDb } from '../src/server.js';
@@ -24,8 +25,24 @@ describe('hosted: health and production composition', () => {
   test('GET /health returns 200 JSON without a session', async () => {
     const res = await fetch(`${server.baseUrl}/health`);
     assert.equal(res.status, 200);
-    const body = (await res.json()) as { status: string };
+    const body = (await res.json()) as { status: string; ok: boolean; service: string; commit: string };
     assert.equal(body.status, 'ok');
+    assert.equal(body.ok, true);
+    assert.equal(body.service, 'ewurk');
+    assert.equal(typeof body.commit, 'string');
+  });
+
+  test('health commit comes from RAILWAY_GIT_COMMIT_SHA, else unknown', () => {
+    const sha = 'd6e2af5d4c30c2ca3fbbf76d0f924a16b2277593';
+    assert.equal(healthBody({ RAILWAY_GIT_COMMIT_SHA: sha }).commit, sha);
+    assert.equal(healthBody({}).commit, 'unknown');
+  });
+
+  test('health env maps the Railway environment name', () => {
+    assert.equal(healthBody({ RAILWAY_ENVIRONMENT_NAME: 'production' }).env, 'production');
+    assert.equal(healthBody({ RAILWAY_ENVIRONMENT_NAME: 'uat' }).env, 'uat');
+    assert.equal(healthBody({ RAILWAY_ENVIRONMENT_NAME: 'dev' }).env, 'dev');
+    assert.equal(healthBody({ APP_ENV: 'uat', RAILWAY_ENVIRONMENT_NAME: 'production' }).env, 'uat');
   });
 
   test('GET /dev/outbox is absent when devOutboxEnabled is false', async () => {
