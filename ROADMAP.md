@@ -44,7 +44,7 @@ Notes:
 
 ## M3: Lessons 1–4
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Publish the first month’s first four instructor-ready lessons (welcome, browser, files, typing).
 
