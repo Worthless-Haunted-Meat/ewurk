@@ -4,24 +4,25 @@ Milestones are ordered by dependency, then user value. Each should be completabl
 
 ## M1: Walking skeleton
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Project scaffold with lint, typecheck, test, build, and dev server so `GET /` returns 200 before any real lessons exist.
 
 Acceptance:
 
-- [ ] `npm ci` succeeds on a fresh clone
-- [ ] `npm run typecheck` passes
-- [ ] `npm run lint` passes
-- [ ] `npm test` passes with at least one real test (e.g. smoke that `lessons/` directory exists)
-- [ ] `npm run build` completes and creates `dist/index.html`
-- [ ] `npm run dev` starts; `curl -s -o /dev/null -w "%{http_code}" http://localhost:PORT/` returns `200`
-- [ ] `README.md` documents install, dev, test, build, and that attendance stays in EWURK
+- [x] `npm ci` succeeds on a fresh clone
+- [x] `npm run typecheck` passes
+- [x] `npm run lint` passes
+- [x] `npm test` passes with at least one real test (e.g. smoke that `lessons/` directory exists)
+- [x] `npm run build` completes and creates `dist/index.html`
+- [x] `npm run dev` starts; `curl -s -o /dev/null -w "%{http_code}" http://localhost:PORT/` returns `200`
+- [x] `README.md` documents install, dev, test, build, and that attendance stays in EWURK
 
 Notes:
 
 - GPL-3.0-or-later `LICENSE`, `engines.node >= 22.5.0`, ESM + `.js` import extensions in `src/`.
 - No lesson content required yet; placeholder index is fine.
+- Scaffold lives in `curriculum/` beside the EWURK app on this branch; run all npm commands from `curriculum/` until the dedicated `ewurk-curriculum` repo is split out.
 
 ## M2: Lesson contract and validator
 
