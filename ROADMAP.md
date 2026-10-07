@@ -26,7 +26,7 @@ Notes:
 
 ## M2: Lesson contract and validator
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Define the required markdown headings and enforce them with automated tests on every file in `lessons/`.
 
