@@ -13,3 +13,6 @@ coverage/
 playwright-report/
 test-results/
 data/
+ewurk-linux-image/dist/
+image/config/.build/
+*.iso

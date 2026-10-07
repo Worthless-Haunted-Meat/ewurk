@@ -5,6 +5,22 @@ e-waste, refurbishes it into Linux laptops and tablets, and leases them to
 low-income families for $20/month. See `REQUIREMENTS.md` for what it does
 and `DESIGN.md` for how it's built.
 
+## EWURK Linux image (build tooling)
+
+The `ewurk-linux-image/` workspace builds the reproducible Debian desktop
+image described in `SPEC.md`. It is separate from the operations app above.
+
+```sh
+git clone https://github.com/Worthless-Haunted-Meat/ewurk.git
+cd ewurk
+npm ci
+npm run dev
+npm test
+```
+
+The dev server answers `GET http://localhost:3000/` with a JSON health payload.
+See `ewurk-linux-image/README.md` for workspace details.
+
 > Status: v1 complete. All adapters and services are implemented; `npm test`
 > runs the full unit/adapter/route suite plus the six Playwright workflow
 > specs (see `TASKS.md`) green from a fresh clone.

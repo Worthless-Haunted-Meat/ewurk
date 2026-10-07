@@ -2,23 +2,24 @@
 
 ## M1: Walking skeleton
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Scaffold the Node/TypeScript repo with lint, typecheck, tests, and a minimal dev server so the pipeline is provably green before image work.
 
 Acceptance:
 
-- [ ] `npm ci` succeeds on a fresh clone
-- [ ] `npm run lint` exits 0
-- [ ] `npm run typecheck` exits 0
-- [ ] `npm test` passes with at least one real test (e.g. manifest schema or health route)
-- [ ] `npm run dev` starts and `GET http://localhost:3000/` returns HTTP 200
-- [ ] `README.md` contains clone, install, `npm run dev`, and `npm test` commands
+- [x] `npm ci` succeeds on a fresh clone
+- [x] `npm run lint` exits 0
+- [x] `npm run typecheck` exits 0
+- [x] `npm test` passes with at least one real test (e.g. manifest schema or health route)
+- [x] `npm run dev` starts and `GET http://localhost:3000/` returns HTTP 200
+- [x] `README.md` contains clone, install, `npm run dev`, and `npm test` commands
 
 Notes:
 
 - Add `LICENSE` (GPL-3.0) and `.gitignore` for `dist/`, `image/config/.build/`, `*.iso`.
 - `npm run build` in M1 may only compile TypeScript; full ISO build lands in M4.
+- Linux image workspace lives under `ewurk-linux-image/`; root `npm` scripts delegate via workspaces so EWURK ops `src/` is untouched. Ops dev/test use `dev:ops` and `test:all`.
 
 ## M2: Image manifest and policy tests
 
