@@ -95,20 +95,21 @@ Notes:
 
 ## M6: Telemetry checks and QEMU smoke
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Automate “no phone home on first boot” policy checks and document an unattended VM smoke test to desktop/first-boot completion.
 
 Acceptance:
 
-- [ ] `npm test` runs telemetry policy tests (`src/verify/telemetry.ts`) against package lists and static config fixtures
-- [ ] `qemu/smoke.sh` exits 0 when run on a host with QEMU, ISO at `dist/*.iso`, and creates log at `dist/qemu-smoke.log`
-- [ ] `README.md` documents QEMU smoke prerequisites and expected success output (including `/var/lib/ewurk-firstboot/done` or documented marker)
-- [ ] `npm test` documents or gates optional QEMU test via env var (e.g. `EWURK_QEMU_SMOKE=1`) so default `npm test` stays offline-fast
+- [x] `npm test` runs telemetry policy tests (`src/verify/telemetry.ts`) against package lists and static config fixtures
+- [x] `qemu/smoke.sh` exits 0 when run on a host with QEMU, ISO at `dist/*.iso`, and creates log at `dist/qemu-smoke.log`
+- [x] `README.md` documents QEMU smoke prerequisites and expected success output (including `/var/lib/ewurk-firstboot/done` or documented marker)
+- [x] `npm test` documents or gates optional QEMU test via env var (e.g. `EWURK_QEMU_SMOKE=1`) so default `npm test` stays offline-fast
 
 Notes:
 
 - Smoke test should fail if outbound telemetry endpoints are contacted when documented test harness runs (e.g. unstarted network or `nc` listen assertions documented in README).
+- Real ISO boots use `-nic none`; stub ISOs skip boot and still validate QEMU + log path.
 
 ## M7: Polish and release readiness
 

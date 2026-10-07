@@ -8,6 +8,7 @@ PACKAGES=(
 	xorriso
 	squashfs-tools
 	syslinux-utils
+	qemu-system-x86
 )
 
 if [[ "${1:-}" == "--install" ]]; then

@@ -169,6 +169,43 @@ To ship a new image recipe:
    first-boot scripts change).
 3. Run `npm test` and `npm run build` — both enforce the package policy.
 
+## Telemetry policy (no phone home)
+
+`image/manifest.json` `forbiddenPackages` and `image/policy/telemetry-policy.json`
+(forbidden systemd units and paths) are enforced in `npm test` via
+`src/verify/telemetry.ts`. The image recipe must not include Ubuntu telemetry,
+`snapd`, or similar reporting packages.
+
+## QEMU smoke (optional)
+
+Prerequisites: `qemu-system-x86_64`, an ISO under `dist/` (`npm run build` or a
+full `EWURK_RUN_LB_BUILD=1` build), and enough RAM for a 2 GiB VM.
+
+Default `npm test` stays offline-fast. To run the smoke harness:
+
+```sh
+EWURK_QEMU_SMOKE=1 npm run test:qemu-smoke
+# or
+bash qemu/smoke.sh
+```
+
+The script writes `dist/qemu-smoke.log`. On a **stub** ISO it validates QEMU and
+paths only. On a **bootable** ISO it boots with `-nic none` (no network egress)
+and succeeds when the serial log contains the first-boot marker
+`/var/lib/ewurk-firstboot/done`.
+
+Expected success lines in `dist/qemu-smoke.log`:
+
+```text
+SUCCESS (stub validation only)
+```
+
+or, for a full image:
+
+```text
+SUCCESS: first-boot marker seen in serial log
+```
+
 ## Quality bar
 
 ```sh
