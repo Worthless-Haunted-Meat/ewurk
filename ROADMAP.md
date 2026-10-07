@@ -63,7 +63,7 @@ Notes:
 
 ## M4: Lessons 5–7
 
-Status: [ ] todo
+Status: [~] in progress
 
 Goal: Add online safety, search literacy, and pictures/screenshots lessons for Saturdays 5–7.
 
