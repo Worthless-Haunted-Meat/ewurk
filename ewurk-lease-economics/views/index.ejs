@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 1.5rem auto; padding: 0 1rem; }
+      textarea { width: 100%; min-height: 8rem; font-family: ui-monospace, monospace; }
+      pre.results { background: #f4f4f5; padding: 1rem; overflow-x: auto; }
+      .error { color: #9f1239; }
+      label { display: block; margin-top: 1rem; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>EWURK lease economics</h1>
+      <p>
+        Paste shop-sourced CSV or upload a file (same columns as
+        <code>templates/inputs.template.csv</code>). The $20/month lease is a
+        behavioral nudge—not rent.
+      </p>
+
+      <% if (typeof error === 'string' && error) { %>
+        <p class="error" role="alert"><%= error %></p>
+      <% } %>
+
+      <form id="calculate-form" method="post" action="/calculate">
+        <label for="csv_text">CSV text</label>
+        <textarea id="csv_text" name="csv_text" placeholder="label,parts_cents,..."><%= typeof csv_text === 'string' ? csv_text : '' %></textarea>
+
+        <label for="csv_file">Or upload CSV file</label>
+        <input id="csv_file" type="file" accept=".csv,text/csv,text/plain" />
+
+        <p>
+          <button type="submit">Calculate recovery</button>
+        </p>
+      </form>
+
+      <% if (typeof results === 'string' && results) { %>
+        <h2>Recovery table</h2>
+        <pre class="results"><%= results %></pre>
+      <% } %>
+    </main>
+    <script>
+      const form = document.getElementById('calculate-form');
+      const textarea = document.getElementById('csv_text');
+      const fileInput = document.getElementById('csv_file');
+      form.addEventListener('submit', (event) => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file || textarea.value.trim() !== '') {
+          return;
+        }
+        event.preventDefault();
+        file.text().then((text) => {
+          textarea.value = text;
+          form.submit();
+        }).catch(() => {
+          alert('Could not read the selected file.');
+        });
+      });
+    </script>
+  </body>
+</html>

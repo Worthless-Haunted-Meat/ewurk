@@ -1,0 +1,34 @@
+{
+  "name": "ewurk-lease-economics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shop-driven lease recovery calculator for EWURK refurb economics (integer cents, CSV in).",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --import tsx --test test/*.test.ts",
+    "calculate": "node dist/cli.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.5",
+    "eslint": "^9.10.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.6.0"
+  }
+}
