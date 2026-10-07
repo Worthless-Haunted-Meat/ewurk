@@ -26,20 +26,21 @@ Notes:
 
 ## M2: Lesson contract and validator
 
-Status: [~] in progress
+Status: [x] done
 
 Goal: Define the required markdown headings and enforce them with automated tests on every file in `lessons/`.
 
 Acceptance:
 
-- [ ] `src/lessonSchema.ts` (or equivalent) documents required sections: Goal, Materials, Steps, chaotic fallback, Done looks like
-- [ ] `npm test` fails if a lesson file is missing a section or has fewer than 3 or more than 5 steps under `## Steps`
-- [ ] `lessons/README.md` or template file shows authors how to write a valid lesson
-- [ ] All quality-bar commands from SPEC.md still pass
+- [x] `src/lessonSchema.ts` (or equivalent) documents required sections: Goal, Materials, Steps, chaotic fallback, Done looks like
+- [x] `npm test` fails if a lesson file is missing a section or has fewer than 3 or more than 5 steps under `## Steps`
+- [x] `lessons/README.md` or template file shows authors how to write a valid lesson
+- [x] All quality-bar commands from SPEC.md still pass
 
 Notes:
 
 - Add one intentionally complete **fixture** lesson used only for tests, or a single real Lesson 1 draft—either is fine if tests are real.
+- Shipped draft `lessons/01-welcome-linux-desktop.md`; invalid cases live under `test/fixtures/`.
 
 ## M3: Lessons 1–4
 
