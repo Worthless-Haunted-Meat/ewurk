@@ -142,6 +142,18 @@ npm test
 npm run build
 ```
 
+## Known gaps
+
+- Lives under the `ewurk` monorepo (`ewurk-lease-economics/`), not a separate GitHub
+  repository (avoids rebuilding the ops app on every economics change).
+- No import of EWURK payment-export CSV yet; lease ledger entry remains manual in
+  the ops app.
+- No donor-vs-lessee subsidy split model (future idea in `SPEC.md`).
+- File upload in the web UI uses in-browser `FileReader` (no server-side multipart
+  parser); paste-in-textarea works without JavaScript for the CSV body only.
+- `npm test` always runs `npm run build` first (slower, but keeps `dist/cli.js` in
+  sync for CLI spawn tests).
+
 ## License
 
 GPL-3.0-or-later. See `LICENSE` in this directory.
