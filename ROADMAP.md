@@ -18,14 +18,15 @@ Notes:
 - Root `eslint.config.js` ignores `ewurk-lease-economics/**`; lint runs inside the subpackage only.
 
 ## M2: Integer cents domain model
-Status: [~] in progress
+Status: [x] done
 Goal: Implement and test core recovery math in pure modules with fixture numbers only.
 Acceptance:
-- [ ] `cd ewurk-lease-economics && npm test` includes tests for `cost_cents_per_available` and `months_to_recover` using obviously fake cent values
-- [ ] `cd ewurk-lease-economics && npm run typecheck` passes
-- [ ] README states rounding rule for division and that money is integer cents only
+- [x] `cd ewurk-lease-economics && npm test` includes tests for `cost_cents_per_available` and `months_to_recover` using obviously fake cent values
+- [x] `cd ewurk-lease-economics && npm run typecheck` passes
+- [x] README states rounding rule for division and that money is integer cents only
 Notes:
 - `monthly_lease_cents` defaults to 2000; tests may override with labeled fixtures.
+- Batch and labor division use round-half-up; months-to-recover uses ceiling at lease cents.
 
 ## M3: CSV template and parser
 Status: [ ] todo
