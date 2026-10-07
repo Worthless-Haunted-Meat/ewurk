@@ -69,3 +69,10 @@ When you create a class session in EWURK, set **topic** to the same string shown
 ## License
 
 [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html). Canonical license text: `LICENSE` in the parent repository (EWURK monorepo layout). Lesson content is documentation under the same license.
+
+## Known gaps
+
+- **Monorepo layout:** the curriculum ships inside the [EWURK](https://github.com/Worthless-Haunted-Meat/ewurk) repository under `curriculum/` until a dedicated `ewurk-curriculum` repo is split out; clone that repo and `cd curriculum` before running npm commands.
+- **CI:** there is no separate GitHub Actions job yet that runs `curriculum/` lint/test/build on every PR (EWURK’s existing workflow targets the attendance app only).
+- **Lab prep:** Lesson 7 expects staff to copy `Saturday/shared/sample.jpg` onto lab machines; Lesson 8 expects staff-provided practice webmail accounts (documented in the lesson—no secrets in this repo).
+- **Spanish, homework PDFs, and EWURK lesson-id metadata** are explicitly out of scope for v1 (see `SPEC.md` non-goals).
